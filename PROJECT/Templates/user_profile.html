@@ -1,53 +1,103 @@
-{% extends 'base.html' %}
-{% block title %}My Profile - BlissfulHome{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/profileedit.css') }}">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <ul class="sidebar-menu">
+            <!-- Dashboard Button -->
+            <li>
+                <form action="{{ url_for('main.user_dashboard') }}" method="GET">
+                    <button type="submit" class="sidebar-btn">Dashboard</button>
+                </form>
+            </li>
 
-{% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-7">
-            <div class="card border-0 shadow-lg rounded-4">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle mb-3"
-                            style="width:80px;height:80px;">
-                            <i class="bi bi-person-circle fs-1 text-primary"></i>
-                        </div>
-                        <h3 class="fw-bold">My Profile</h3>
-                        <p class="text-muted">Manage your account information</p>
+            <!-- Hide My Profile button if the user is on the profile page -->
+            {% if request.endpoint != 'main.user_profile' %}
+            <li><a href="{{ url_for('main.user_profile') }}">My Profile</a></li>
+            {% endif %}
+            
+            <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content">
+        <div class="profile-container">
+            <h1>Edit Profile</h1>
+
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul class="flash-messages">
+                        {% for category, message in messages %}
+                            <li class="flash-{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Profile Info -->
+            <div class="profile-card">
+                <h2>Profile Information</h2>
+                <div class="profile-details">
+                    <div class="profile-item">
+                        <strong>Name:</strong> <span>{{ user.name }}</span>
                     </div>
-                    <form method="POST" action="{{ url_for('main.user_profile') }}">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}"
-                                required>
-                            <label for="name"><i class="bi bi-person me-2"></i>Full Name</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control bg-light" id="username" value="{{ user.username }}"
-                                disabled>
-                            <label for="username"><i class="bi bi-at me-2"></i>Username (cannot be changed)</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="tel" class="form-control" id="phone" name="phone" value="{{ user.phone }}"
-                                required>
-                            <label for="phone"><i class="bi bi-phone me-2"></i>Phone</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="address" name="address"
-                                value="{{ user.address }}" required>
-                            <label for="address"><i class="bi bi-geo-alt me-2"></i>Address</label>
-                        </div>
-                        <div class="form-floating mb-4">
-                            <input type="text" class="form-control" id="pincode" name="pincode"
-                                value="{{ user.pincode }}" required maxlength="6">
-                            <label for="pincode"><i class="bi bi-mailbox me-2"></i>Pincode</label>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
-                            <i class="bi bi-save me-2"></i>Update Profile
-                        </button>
-                    </form>
+                    <div class="profile-item">
+                        <strong>Username:</strong> <span>{{ user.username }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <strong>Phone Number:</strong> <span>{{ user.phone }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <strong>Address:</strong> <span>{{ user.address }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <strong>Pincode:</strong> <span>{{ user.pincode }}</span>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Edit Form -->
+            <div class="edit-form">
+                <h2>Update Your Information</h2>
+                <form action="{{ url_for('main.user_profile') }}" method="POST">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" value="{{ user.name }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number:</label>
+                        <input type="text" id="phone" name="phone" value="{{ user.phone }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Address:</label>
+                        <input type="text" id="address" name="address" value="{{ user.address }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pincode">Pincode:</label>
+                        <input type="text" id="pincode" name="pincode" value="{{ user.pincode }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="submit-btn">Update Profile</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+
+    <footer class="footer">
+        <p>&copy; 2024 Professional Services. All rights reserved.</p>
+    </footer>
+</body>
+</html>

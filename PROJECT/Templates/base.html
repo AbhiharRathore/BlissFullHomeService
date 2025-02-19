@@ -1,105 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}BlissfulHome Services{% endblock %}</title>
-
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
-    {% block extra_css %}{% endblock %}
+    {% block head %}{% endblock %}
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm sticky-top">
-        <div class="container">
-            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="{{ url_for('main.home') }}">
-                <i class="bi bi-house-heart-fill fs-4"></i>
-                BlissfulHome
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center gap-1">
-                    {% if session.get('role') == 'admin' %}
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.admin_dashboard') }}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.service_manage') }}"><i class="bi bi-gear me-1"></i>Manage Services</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.summary') }}"><i class="bi bi-bar-chart me-1"></i>Summary</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.view_blocked_professionals') }}"><i class="bi bi-person-slash me-1"></i>Blocked</a></li>
-                        <li class="nav-item ms-2"><a class="btn btn-outline-light btn-sm" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right me-1"></i>Logout</a></li>
-                    {% elif session.get('role') == 'user' %}
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.user_dashboard') }}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.user_profile') }}"><i class="bi bi-person-circle me-1"></i>Profile</a></li>
-                        <li class="nav-item ms-2"><a class="btn btn-outline-light btn-sm" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right me-1"></i>Logout</a></li>
-                    {% elif session.get('role') == 'service_professional' %}
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.professional_dashboard') }}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.edit_professional_profile') }}"><i class="bi bi-person-circle me-1"></i>Profile</a></li>
-                        <li class="nav-item ms-2"><a class="btn btn-outline-light btn-sm" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right me-1"></i>Logout</a></li>
-                    {% else %}
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.home') }}"><i class="bi bi-house me-1"></i>Home</a></li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-box-arrow-in-right me-1"></i>Login
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="{{ url_for('auth.user_login') }}"><i class="bi bi-person me-2"></i>Customer Login</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('auth.service_professional_login') }}"><i class="bi bi-tools me-2"></i>Professional Login</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ url_for('auth.admin_login') }}"><i class="bi bi-shield-lock me-2"></i>Admin Login</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-person-plus me-1"></i>Register
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="{{ url_for('auth.user_signup') }}"><i class="bi bi-person me-2"></i>Customer Signup</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('auth.service_professional_signup') }}"><i class="bi bi-tools me-2"></i>Professional Signup</a></li>
-                            </ul>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Flash Messages -->
-    <div class="container mt-3">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show" role="alert">
-                        <i class="bi {% if category == 'success' %}bi-check-circle{% elif category == 'danger' %}bi-exclamation-triangle{% elif category == 'warning' %}bi-exclamation-circle{% else %}bi-info-circle{% endif %} me-2"></i>
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-    </div>
-
-    <!-- Main Content -->
-    <main>
-        {% block content %}{% endblock %}
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-light py-4 mt-5">
-        <div class="container text-center">
-            <p class="mb-1"><i class="bi bi-house-heart-fill me-2"></i>BlissfulHome Services</p>
-            <p class="text-secondary small mb-0">&copy; 2024 BlissfulHome. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    {% block extra_js %}{% endblock %}
+    {% block content %}
+    {% endblock %}
 </body>
 </html>

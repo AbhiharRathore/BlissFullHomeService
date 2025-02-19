@@ -1,105 +1,111 @@
-{% extends 'base.html' %}
-{% block title %}Manage Services - BlissfulHome{% endblock %}
-
-{% block content %}
-<div class="container py-4">
-    <div class="row">
-        <div class="col-md-5">
-            <div class="card border-0 shadow-sm rounded-3">
-                <div class="card-header bg-primary bg-opacity-10 py-3">
-                    <h5 class="mb-0 fw-bold">
-                        <i class="bi bi-{% if service %}pencil{% else %}plus-circle{% endif %} me-2 text-primary"></i>
-                        {{ 'Edit Service' if service else 'Add New Service' }}
-                    </h5>
-                </div>
-                <div class="card-body p-4">
-                    <form method="POST"
-                        action="{{ url_for('main.service_manage', service_id=service.id if service else None) }}">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="service_name" name="service_name"
-                                placeholder="Service Name" value="{{ service.name if service else '' }}" required>
-                            <label for="service_name">Service Name</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <textarea class="form-control" id="description" name="description" placeholder="Description"
-                                style="height:100px" required>{{ service.description if service else '' }}</textarea>
-                            <label for="description">Description</label>
-                        </div>
-                        <div class="row g-3 mb-3">
-                            <div class="col-6">
-                                <div class="form-floating">
-                                    <input type="number" class="form-control" id="price" name="price"
-                                        placeholder="Price" value="{{ service.price if service else '' }}" required
-                                        min="0" step="0.01">
-                                    <label for="price">Base Price (₹)</label>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="time_required" name="time_required"
-                                        placeholder="Time" value="{{ service.time_required if service else '' }}">
-                                    <label for="time_required">Time Required</label>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100 fw-semibold">
-                            <i class="bi bi-{% if service %}save{% else %}plus-lg{% endif %} me-2"></i>
-                            {{ 'Update Service' if service else 'Add Service' }}
-                        </button>
-                        {% if service %}
-                        <a href="{{ url_for('main.service_manage') }}"
-                            class="btn btn-outline-secondary w-100 mt-2">Cancel</a>
-                        {% endif %}
-                    </form>
-                </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/manage.css') }}">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>Admin Panel</h2>
+            <ul>
+                <li><a href="{{ url_for('main.admin_dashboard') }}" class="sidebar-link">Dashboard</a></li>
+                <li><a href="{{ url_for('main.service_manage') }}" class="sidebar-link">Manage Services</a></li>
+                <li><a href="{{ url_for('main.summary') }}" class="sidebar-link">Summary</a></li>
+                <li><a href="{{ url_for('main.view_blocked_professionals') }}" class="sidebar-link">Blocked Professionals</a></li>
+            </ul>
+            <div class="logout">
+                <a href="{{ url_for('auth.logout') }}" class="sidebar-link logout-btn">Logout</a>
             </div>
         </div>
-        <div class="col-md-7">
-            <div class="card border-0 shadow-sm rounded-3">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 fw-bold"><i class="bi bi-list-ul me-2 text-primary"></i>All Services</h5>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Price</th>
-                                    <th>Time</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for s in services %}
-                                <tr>
-                                    <td><span class="badge bg-secondary">{{ s.id }}</span></td>
-                                    <td class="fw-semibold">{{ s.name }}</td>
-                                    <td class="text-success">₹{{ s.price }}</td>
-                                    <td class="small">{{ s.time_required or 'N/A' }}</td>
-                                    <td>
-                                        <a href="{{ url_for('main.service_manage', service_id=s.id) }}"
-                                            class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i></a>
-                                        <form action="{{ url_for('main.delete_service', service_id=s.id) }}"
-                                            method="POST" class="d-inline"
-                                            onsubmit="return confirm('Delete this service?');">
-                                            <button class="btn btn-outline-danger btn-sm"><i
-                                                    class="bi bi-trash"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                {% else %}
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted py-4">No services. Add one!</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Flash message container -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages" style="margin-bottom: 20px;">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}" style="padding: 12px 15px; margin-bottom: 10px; border-radius: 5px; {% if category == 'danger' or category == 'error' %}background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;{% elif category == 'success' %}background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;{% elif category == 'warning' %}background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba;{% else %}background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
                     </div>
-                </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Header Section -->
+            <header class="header">
+                <h1>Service Management</h1>
+                <p>Manage the services offered on your platform</p>
+            </header>
+
+            <!-- Existing Services Section -->
+            <div class="section-container">
+                <h3>Existing Services</h3>
+                <table class="services-table">
+                    <thead>
+                        <tr>
+                            <th>Service Name</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Time Required</th>
+                            <th>Date Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in services %}
+                        <tr>
+                            <td>{{ s.name }}</td>
+                            <td>{{ s.description }}</td>
+                            <td>₹{{ s.price }}</td>
+                            <td>{{ s.time_required }} mins</td>
+                            <td>{{ s.created_at.strftime('%Y-%m-%d %H:%M:%S') if s.created_at else 'N/A' }}</td>
+                            <td>
+                                <a href="{{ url_for('main.service_manage', service_id=s.id) }}" class="btn btn-info">Edit</a>
+                                <form action="{{ url_for('main.delete_service', service_id=s.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this service?');">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6">No services available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Add/Edit Service Form -->
+            <div class="add-service">
+                <h3>{{ 'Edit Service' if service else 'Add New Service' }}</h3>
+                <form method="POST">
+                    <label for="service_name" style="font-weight: bold; margin-top: 10px; display: block;">Service Name:</label>
+                    <input type="text" id="service_name" name="service_name" value="{{ service.name if service else '' }}" placeholder="Service Name" required>
+
+                    <label for="description" style="font-weight: bold; margin-top: 10px; display: block;">Description:</label>
+                    <textarea id="description" name="description" placeholder="Service Description" rows="4" required>{{ service.description if service else '' }}</textarea>
+
+                    <label for="price" style="font-weight: bold; margin-top: 10px; display: block;">Price (₹):</label>
+                    <input type="number" id="price" name="price" step="0.01" min="1" value="{{ service.price if service else '' }}" placeholder="Service Price" required>
+
+                    <label for="time_required" style="font-weight: bold; margin-top: 10px; display: block;">Time Required (in minutes):</label>
+                    <input type="number" id="time_required" name="time_required" min="1" value="{{ service.time_required if service and service.time_required else 60 }}" placeholder="Time Required (minutes)" required>
+
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-success">{{ 'Update Service' if service else 'Add Service' }}</button>
+                        {% if service %}
+                            <a href="{{ url_for('main.service_manage') }}" class="btn btn-danger" style="text-decoration: none; padding: 10px 20px; display: inline-block;">Cancel Edit</a>
+                        {% endif %}
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+</body>
+</html>

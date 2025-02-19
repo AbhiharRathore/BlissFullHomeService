@@ -1,69 +1,54 @@
-{% extends 'base.html' %}
-{% block title %}Rate Service - BlissfulHome{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate Service - {{ service_request.service.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/signup.css') }}">
+</head>
+<body>
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-popup {{ 'success' if category == 'success' else 'danger' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-{% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card border-0 shadow-lg rounded-4">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 rounded-circle mb-3"
-                            style="width:70px;height:70px;">
-                            <i class="bi bi-star-fill fs-2 text-warning"></i>
-                        </div>
-                        <h3 class="fw-bold">Rate This Service</h3>
-                        <p class="text-muted">Service: <strong>{{ service_request.service.name }}</strong></p>
-                        {% if service_request.professional %}
-                        <p class="text-muted">Professional: <strong>{{ service_request.professional.name }}</strong></p>
-                        {% endif %}
-                    </div>
-                    <form method="POST"
-                        action="{{ url_for('main.submit_rating', service_request_id=service_request.id) }}">
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">Rating</label>
-                            <div class="d-flex justify-content-center gap-2" id="rating-stars">
-                                {% for i in range(1, 6) %}
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input visually-hidden" type="radio" name="rating"
-                                        id="star{{ i }}" value="{{ i }}" required>
-                                    <label class="form-check-label fs-2 star-label" for="star{{ i }}"
-                                        style="cursor:pointer;">
-                                        <i class="bi bi-star"></i>
-                                    </label>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        <div class="form-floating mb-4">
-                            <textarea class="form-control" id="review" name="review" placeholder="Write a review"
-                                style="height:120px"></textarea>
-                            <label for="review"><i class="bi bi-chat-left-text me-2"></i>Write a review
-                                (optional)</label>
-                        </div>
-                        <button type="submit" class="btn btn-warning w-100 py-2 fw-semibold">
-                            <i class="bi bi-send me-2"></i>Submit Rating
-                        </button>
-                    </form>
-                    <div class="text-center mt-3">
-                        <a href="{{ url_for('main.user_dashboard') }}" class="text-decoration-none"><i
-                                class="bi bi-arrow-left me-1"></i>Back to Dashboard</a>
-                    </div>
-                </div>
+        <form action="{{ url_for('main.submit_rating', service_request_id=service_request.id) }}" method="POST">
+            <h3 class="title">Rate Service</h3>
+            <p style="text-align: center; color: #e0e0e0; margin-bottom: 1.2rem; font-size: 1rem;">
+                <strong>{{ service_request.service.name }}</strong>
+            </p>
+
+            <!-- Rating Select Dropdown -->
+            <div class="text-input">
+                <label for="rating">Rating (1 to 5 Stars)</label>
+                <select name="rating" id="rating" required style="width: 100%; padding: 0.5rem; border-radius: 4px; border: none; background: rgba(30, 30, 60, 0.9); color: #ffffff; font-size: 0.9rem; outline: none; box-shadow: 0 2px 12px rgba(128, 0, 128, 0.5);">
+                    <option value="" disabled selected>Select Rating</option>
+                    <option value="5" style="background: #1a1a2e; color: #fff;">5 Stars - Excellent</option>
+                    <option value="4" style="background: #1a1a2e; color: #fff;">4 Stars - Good</option>
+                    <option value="3" style="background: #1a1a2e; color: #fff;">3 Stars - Average</option>
+                    <option value="2" style="background: #1a1a2e; color: #fff;">2 Stars - Poor</option>
+                    <option value="1" style="background: #1a1a2e; color: #fff;">1 Star - Terrible</option>
+                </select>
             </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
 
-{% block extra_js %}
-<script>
-    document.querySelectorAll('#rating-stars .star-label').forEach((label, index) => {
-        label.addEventListener('click', function () {
-            document.querySelectorAll('#rating-stars .star-label i').forEach((star, idx) => {
-                star.className = idx <= index ? 'bi bi-star-fill text-warning' : 'bi bi-star';
-            });
-        });
-    });
-</script>
-{% endblock %}
+            <!-- Review Textarea -->
+            <div class="text-input">
+                <label for="review">Review</label>
+                <textarea id="review" name="review" rows="4" placeholder="Leave your review here..." style="width: 100%; padding: 0.5rem; border-radius: 4px; border: none; background: rgba(255, 255, 255, 0.1); color: #ffffff; font-size: 0.9rem; outline: none; box-shadow: 0 2px 12px rgba(128, 0, 128, 0.5); resize: vertical;"></textarea>
+            </div>
+
+            <button type="submit" class="signin-btn">Submit Rating</button>
+
+            <div class="create">
+                <a href="{{ url_for('main.user_dashboard') }}">Back to Dashboard</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

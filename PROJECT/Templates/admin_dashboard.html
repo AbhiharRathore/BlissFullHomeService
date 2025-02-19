@@ -1,374 +1,301 @@
-{% extends 'base.html' %}
-{% block title %}Admin Dashboard - BlissfulHome{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/admindashboard.css') }}">
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <h2 class="sidebar-title">Admin Panel</h2>
+            <ul>
+                <li><a href="{{ url_for('main.admin_dashboard') }}" class="sidebar-link">Dashboard</a></li>
+                <li><a href="{{ url_for('main.service_manage') }}" class="sidebar-link">Manage Services</a></li>
+                <li><a href="#" id="searchToggle" class="sidebar-link">Search</a></li>              
+                <li><a href="{{ url_for('main.summary') }}" class="sidebar-link">Summary</a></li>
+                <li><a href="{{ url_for('main.view_blocked_professionals') }}" class="sidebar-link">Blocked Professionals</a></li>
+                <li><a href="{{ url_for('auth.logout') }}" class="sidebar-link logout">Logout</a></li>
+            </ul>
+        </nav>
 
-{% block content %}
-<div class="container-fluid py-4">
-    <!-- Stats Cards -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm rounded-3 bg-primary bg-gradient text-white">
-                <div class="card-body d-flex align-items-center gap-3">
-                    <div class="bg-white bg-opacity-25 rounded-circle p-3"><i class="bi bi-briefcase fs-4"></i></div>
-                    <div>
-                        <h3 class="fw-bold mb-0">{{ total_services }}</h3>
-                        <small class="opacity-75">Services</small>
+        <div class="main-content">
+            <!-- Flash message container -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages" style="margin-bottom: 20px;">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}" style="padding: 12px 15px; margin-bottom: 10px; border-radius: 5px; {% if category == 'danger' or category == 'error' %}background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;{% elif category == 'success' %}background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;{% elif category == 'warning' %}background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba;{% else %}background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm rounded-3 bg-success bg-gradient text-white">
-                <div class="card-body d-flex align-items-center gap-3">
-                    <div class="bg-white bg-opacity-25 rounded-circle p-3"><i class="bi bi-people fs-4"></i></div>
-                    <div>
-                        <h3 class="fw-bold mb-0">{{ total_customers }}</h3>
-                        <small class="opacity-75">Customers</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm rounded-3 bg-warning bg-gradient text-dark">
-                <div class="card-body d-flex align-items-center gap-3">
-                    <div class="bg-white bg-opacity-25 rounded-circle p-3"><i class="bi bi-tools fs-4"></i></div>
-                    <div>
-                        <h3 class="fw-bold mb-0">{{ total_professionals }}</h3>
-                        <small class="opacity-75">Professionals</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm rounded-3 bg-info bg-gradient text-white">
-                <div class="card-body d-flex align-items-center gap-3">
-                    <div class="bg-white bg-opacity-25 rounded-circle p-3"><i class="bi bi-clipboard-check fs-4"></i>
-                    </div>
-                    <div>
-                        <h3 class="fw-bold mb-0">{{ total_requests }}</h3>
-                        <small class="opacity-75">Requests</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                {% endif %}
+            {% endwith %}
 
-    <!-- Search Bar -->
-    <div class="card border-0 shadow-sm rounded-3 mb-4">
-        <div class="card-body">
-            <form method="GET" action="{{ url_for('main.admin_dashboard') }}" class="row g-2 align-items-end">
-                <div class="col-md-10">
-                    <div class="input-group">
-                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                        <input type="text" name="search" class="form-control"
-                            placeholder="Search services, professionals, or requests..." value="{{ search_query }}">
+            <header class="header">
+                <h1>Welcome, Admin!</h1>
+                <p>Manage services, professionals, customers, and service requests with ease.</p>
+
+                <!-- Search Form (Initially hidden or shown if search active) -->
+                <div id="searchForm" style="display: {% if search_query %}block{% else %}none{% endif %}; margin-top: 15px;">
+                    <form action="{{ url_for('main.admin_dashboard') }}" method="GET" class="search-form" style="display: flex; gap: 10px; align-items: center; max-width: 600px;">
+                        <input type="text" name="search" placeholder="Search services, professionals, or requests" class="search-input" value="{{ search_query if search_query else '' }}" style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; flex: 1;">
+                        <button type="submit" class="btn btn-info">Search</button>
+                        {% if search_query %}
+                            <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-danger" style="text-decoration: none; display: inline-block; text-align: center;">Clear</a>
+                        {% endif %}
+                    </form>
+                </div>
+            </header>
+
+            {% if search_query %}
+                <div class="section-container">
+                    <div class="card">
+                        <div class="card-header">Search Results for "{{ search_query }}"</div>
+                        <div class="card-body">
+                            {% if service_requests %}
+                                <h3>Matching Service Requests</h3>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Request ID</th>
+                                            <th>Service</th>
+                                            <th>Customer</th>
+                                            <th>Service Professional</th>
+                                            <th>Request Date</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for sr in service_requests %}
+                                            <tr>
+                                                <td>{{ sr.id }}</td>
+                                                <td>{{ sr.service.name if sr.service else 'N/A' }}</td>
+                                                <td>{{ sr.user.name if sr.user else 'N/A' }}</td>
+                                                <td>
+                                                    {% if sr.professional %}
+                                                        {{ sr.professional.name }}
+                                                    {% else %}
+                                                        Not Assigned
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ sr.date_requested.strftime('%Y-%m-%d') if sr.date_requested else 'N/A' }}</td>
+                                                <td>{{ sr.status }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <p>No matching service requests found.</p>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-2 d-grid">
-                    <button type="submit" class="btn btn-primary"><i class="bi bi-search me-1"></i>Search</button>
-                </div>
-            </form>
-        </div>
-    </div>
+            {% endif %}
 
-    <!-- Tabs -->
-    <ul class="nav nav-tabs mb-3" id="adminTabs" role="tablist">
-        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#services-tab"><i
-                    class="bi bi-briefcase me-1"></i>Services</a></li>
-        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#professionals-tab"><i
-                    class="bi bi-people me-1"></i>Professionals</a></li>
-        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#requests-tab"><i
-                    class="bi bi-clipboard-check me-1"></i>Service Requests</a></li>
-        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#customers-tab"><i
-                    class="bi bi-person me-1"></i>Customers</a></li>
-    </ul>
-
-    <div class="tab-content">
-        <!-- Services Tab -->
-        <div class="tab-pane fade show active" id="services-tab">
-            <div class="card border-0 shadow-sm rounded-3">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-                    <h5 class="mb-0 fw-bold"><i class="bi bi-briefcase me-2 text-primary"></i>All Services</h5>
-                    <a href="{{ url_for('main.service_manage') }}" class="btn btn-primary btn-sm"><i
-                            class="bi bi-plus-lg me-1"></i>Add Service</a>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
+            <!-- Services Section -->
+            <div class="section-container">
+                <div class="card">
+                    <div class="card-header">Services</div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>Service ID</th>
                                     <th>Service Name</th>
                                     <th>Description</th>
-                                    <th>Price (₹)</th>
-                                    <th>Time Required</th>
-                                    <th>Created</th>
+                                    <th>Cost</th>
+                                    <th>Date Created</th> 
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for service in services %}
-                                <tr>
-                                    <td><span class="badge bg-secondary">{{ service.id }}</span></td>
-                                    <td class="fw-semibold">{{ service.name }}</td>
-                                    <td class="text-muted small">{{ service.description[:50] }}...</td>
-                                    <td><span class="text-success fw-bold">₹{{ service.price }}</span></td>
-                                    <td>{{ service.time_required or 'N/A' }}</td>
-                                    <td class="small">{{ service.date_created }}</td>
-                                    <td>
-                                        <a href="{{ url_for('main.service_manage', service_id=service.id) }}"
-                                            class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i></a>
-                                        <form action="{{ url_for('main.delete_service', service_id=service.id) }}"
-                                            method="POST" class="d-inline"
-                                            onsubmit="return confirm('Delete this service?');">
-                                            <button type="submit" class="btn btn-outline-danger btn-sm"><i
-                                                    class="bi bi-trash"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td>{{ service.id }}</td>
+                                        <td>{{ service.name }}</td>
+                                        <td>{{ service.description }}</td>
+                                        <td>₹{{ service.price }}</td>
+                                        <td>{{ service.created_at.strftime('%Y-%m-%d') if service.created_at else 'N/A' }}</td>
+                                        <td><a href="{{ url_for('main.service_manage', service_id=service.id) }}" class="btn btn-info">Manage</a></td>
+                                    </tr>
                                 {% else %}
-                                <tr>
-                                    <td colspan="7" class="text-center text-muted py-4">No services found.</td>
-                                </tr>
+                                    <tr><td colspan="6">No services found.</td></tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Professionals Tab -->
-        <div class="tab-pane fade" id="professionals-tab">
-            <!-- Pending Professionals -->
-            {% if pending_professionals %}
-            <div class="card border-0 shadow-sm rounded-3 mb-3">
-                <div class="card-header bg-warning bg-opacity-10 py-3">
-                    <h5 class="mb-0 fw-bold"><i class="bi bi-hourglass-split me-2 text-warning"></i>Pending Approval ({{
-                        pending_professionals|length }})</h5>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
+            <!-- Service Professionals Section -->
+            <div class="section-container">
+                <div class="card">
+                    <div class="card-header">Service Professionals</div>
+                    <div class="card-body">
+                        <h3>Approved Professionals</h3>
+                        <table class="table">
+                            <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>Name</th>
                                     <th>Service Type</th>
-                                    <th>Experience</th>
-                                    <th>Phone</th>
-                                    <th>Pincode</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for p in pending_professionals %}
-                                <tr>
-                                    <td><span class="badge bg-secondary">{{ p.id }}</span></td>
-                                    <td class="fw-semibold">{{ p.name }}</td>
-                                    <td><span class="badge bg-info text-dark">{{ p.service_type }}</span></td>
-                                    <td>{{ p.experience }} yrs</td>
-                                    <td>{{ p.phone }}</td>
-                                    <td>{{ p.pincode or 'N/A' }}</td>
-                                    <td>
-                                        <form action="{{ url_for('main.approve_professional', professional_id=p.id) }}"
-                                            method="POST" class="d-inline">
-                                            <button class="btn btn-success btn-sm"><i
-                                                    class="bi bi-check-lg me-1"></i>Approve</button>
-                                        </form>
-                                        <form action="{{ url_for('main.reject_professional', professional_id=p.id) }}"
-                                            method="POST" class="d-inline">
-                                            <button class="btn btn-danger btn-sm"><i
-                                                    class="bi bi-x-lg me-1"></i>Reject</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-
-            <!-- Approved Professionals -->
-            <div class="card border-0 shadow-sm rounded-3">
-                <div class="card-header bg-success bg-opacity-10 py-3">
-                    <h5 class="mb-0 fw-bold"><i class="bi bi-person-check me-2 text-success"></i>Approved Professionals
-                        ({{ approved_professionals|length }})</h5>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Service Type</th>
-                                    <th>Experience</th>
-                                    <th>Rating</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for p in approved_professionals %}
-                                <tr>
-                                    <td><span class="badge bg-secondary">{{ p.id }}</span></td>
-                                    <td class="fw-semibold">{{ p.name }}</td>
-                                    <td><span class="badge bg-info text-dark">{{ p.service_type }}</span></td>
-                                    <td>{{ p.experience }} yrs</td>
-                                    <td>
-                                        {% if p.rating %}
-                                        <span class="text-warning"><i class="bi bi-star-fill"></i> {{
-                                            "%.1f"|format(p.rating) }}</span>
-                                        {% else %}
-                                        <span class="text-muted">No rating</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <form action="{{ url_for('main.block_professional', professional_id=p.id) }}"
-                                            method="POST" class="d-inline"
-                                            onsubmit="return confirm('Block this professional?');">
-                                            <button class="btn btn-outline-danger btn-sm"><i
-                                                    class="bi bi-person-slash me-1"></i>Block</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                {% else %}
-                                <tr>
-                                    <td colspan="6" class="text-center text-muted py-4">No approved professionals.</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Service Requests Tab -->
-        <div class="tab-pane fade" id="requests-tab">
-            <div class="card border-0 shadow-sm rounded-3">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 fw-bold"><i class="bi bi-clipboard-check me-2 text-info"></i>All Service Requests
-                    </h5>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Service</th>
-                                    <th>Customer</th>
-                                    <th>Professional</th>
-                                    <th>Date</th>
                                     <th>Status</th>
-                                    <th>Rating</th>
+                                    <th>Average Rating</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for req in service_requests %}
-                                <tr>
-                                    <td><span class="badge bg-secondary">{{ req.id }}</span></td>
-                                    <td>{{ req.service.name if req.service else 'N/A' }}</td>
-                                    <td>{{ req.user.name if req.user else 'N/A' }}</td>
-                                    <td>{{ req.professional.name if req.professional else '<span class="text-muted">Not
-                                            Assigned</span>'|safe }}</td>
-                                    <td class="small">{{ req.date_requested.strftime('%Y-%m-%d') if req.date_requested
-                                        else 'N/A' }}</td>
-                                    <td>
-                                        {% if req.status == 'pending' %}
-                                        <span class="badge bg-warning text-dark">Pending</span>
-                                        {% elif req.status == 'accepted' %}
-                                        <span class="badge bg-primary">Accepted</span>
-                                        {% elif req.status == 'closed' %}
-                                        <span class="badge bg-secondary">Closed</span>
-                                        {% elif req.status == 'completed' %}
-                                        <span class="badge bg-success">Completed</span>
-                                        {% elif req.status == 'rejected' %}
-                                        <span class="badge bg-danger">Rejected</span>
-                                        {% else %}
-                                        <span class="badge bg-light text-dark">{{ req.status }}</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if req.rating %}
-                                        <span class="text-warning"><i class="bi bi-star-fill"></i> {{ req.rating
-                                            }}/5</span>
-                                        {% else %}
-                                        <span class="text-muted">-</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
+                                {% for professional in approved_professionals %}
+                                    <tr>
+                                        <td>{{ professional.id }}</td>
+                                        <td>{{ professional.name }}</td>
+                                        <td>{{ professional.service_type }}</td>
+                                        <td>{{ professional.status }}</td>
+                                        <td>
+                                            {% if professional.rating %}
+                                                {{ professional.rating }}
+                                            {% else %}
+                                                No rating yet
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <form action="{{ url_for('main.block_professional', professional_id=professional.id) }}" method="POST" style="display:inline;">
+                                                <button type="submit" class="btn btn-danger">Block</button>
+                                            </form>
+                                        </td>
+                                    </tr>
                                 {% else %}
+                                    <tr><td colspan="6">No approved professionals found.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <h3 style="margin-top: 25px;">Pending Professionals</h3>
+                        <table class="table">
+                            <thead>
                                 <tr>
-                                    <td colspan="7" class="text-center text-muted py-4">No service requests.</td>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Service Type</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
+                            </thead>
+                            <tbody>
+                                {% for professional in pending_professionals %}
+                                    <tr>
+                                        <td>{{ professional.id }}</td>
+                                        <td>{{ professional.name }}</td>
+                                        <td>{{ professional.service_type }}</td>
+                                        <td>{{ professional.status }}</td>
+                                        <td>
+                                            <form action="{{ url_for('main.approve_professional', professional_id=professional.id) }}" method="POST" style="display:inline;">
+                                                <button type="submit" class="btn btn-success">Accept</button>
+                                            </form>
+                                            <form action="{{ url_for('main.reject_professional', professional_id=professional.id) }}" method="POST" style="display:inline;">
+                                                <button type="submit" class="btn btn-danger">Reject</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr><td colspan="5">No pending professionals found.</td></tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Customers Tab -->
-        <div class="tab-pane fade" id="customers-tab">
-            <div class="card border-0 shadow-sm rounded-3">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 fw-bold"><i class="bi bi-person me-2 text-primary"></i>All Customers</h5>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
+            <!-- Customers Section -->
+            <div class="section-container">
+                <div class="card">
+                    <div class="card-header">Customers</div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>Name</th>
                                     <th>Username</th>
                                     <th>Phone</th>
                                     <th>Address</th>
-                                    <th>Pincode</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for user in all_customers %}
-                                <tr>
-                                    <td><span class="badge bg-secondary">{{ user.id }}</span></td>
-                                    <td class="fw-semibold">{{ user.name }}</td>
-                                    <td>{{ user.username }}</td>
-                                    <td>{{ user.phone }}</td>
-                                    <td class="small">{{ user.address[:30] }}...</td>
-                                    <td>{{ user.pincode }}</td>
-                                    <td>
-                                        {% if user.blocked %}
-                                        <span class="badge bg-danger">Blocked</span>
-                                        {% else %}
-                                        <span class="badge bg-success">Active</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if user.blocked %}
-                                        <form action="{{ url_for('main.unblock_user', user_id=user.id) }}" method="POST"
-                                            class="d-inline">
-                                            <button class="btn btn-success btn-sm"><i
-                                                    class="bi bi-person-check me-1"></i>Unblock</button>
-                                        </form>
-                                        {% else %}
-                                        <form action="{{ url_for('main.block_user', user_id=user.id) }}" method="POST"
-                                            class="d-inline" onsubmit="return confirm('Block this customer?');">
-                                            <button class="btn btn-outline-danger btn-sm"><i
-                                                    class="bi bi-person-slash me-1"></i>Block</button>
-                                        </form>
-                                        {% endif %}
-                                    </td>
-                                </tr>
+                                {% for customer in customers %}
+                                    <tr>
+                                        <td>{{ customer.id }}</td>
+                                        <td>{{ customer.name }}</td>
+                                        <td>{{ customer.username }}</td>
+                                        <td>{{ customer.phone }}</td>
+                                        <td>{{ customer.address }}{% if customer.pincode %} ({{ customer.pincode }}){% endif %}</td>
+                                        <td>
+                                            {% if customer.is_blocked %}
+                                                <span style="color: #dc3545; font-weight: bold;">Blocked</span>
+                                            {% else %}
+                                                <span style="color: #28a745; font-weight: bold;">Active</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if customer.is_blocked %}
+                                                <form action="{{ url_for('main.unblock_customer', customer_id=customer.id) }}" method="POST" style="display:inline;">
+                                                    <button type="submit" class="btn btn-success">Unblock</button>
+                                                </form>
+                                            {% else %}
+                                                <form action="{{ url_for('main.block_customer', customer_id=customer.id) }}" method="POST" style="display:inline;">
+                                                    <button type="submit" class="btn btn-danger">Block</button>
+                                                </form>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
                                 {% else %}
+                                    <tr><td colspan="7">No customers found.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- All Service Requests Section -->
+            <div class="section-container">
+                <div class="card">
+                    <div class="card-header">All Service Requests</div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
                                 <tr>
-                                    <td colspan="8" class="text-center text-muted py-4">No customers registered.</td>
+                                    <th>Request ID</th>
+                                    <th>Service</th>
+                                    <th>Customer</th>
+                                    <th>Service Professional</th>
+                                    <th>Request Date</th>
+                                    <th>Status</th>
                                 </tr>
+                            </thead>
+                            <tbody>
+                                {% for sr in service_requests %}
+                                    <tr>
+                                        <td>{{ sr.id }}</td>
+                                        <td>{{ sr.service.name if sr.service else 'N/A' }}</td>
+                                        <td>{{ sr.user.name if sr.user else 'N/A' }}</td>
+                                        <td>
+                                            {% if sr.professional %}
+                                                {{ sr.professional.name }}
+                                            {% else %}
+                                                Not Assigned
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ sr.date_requested.strftime('%Y-%m-%d') if sr.date_requested else 'N/A' }}</td>
+                                        <td>{{ sr.status }}</td>
+                                    </tr>
+                                {% else %}
+                                    <tr><td colspan="6">No service requests found.</td></tr>
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -377,5 +304,17 @@
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+
+    <script>
+        document.getElementById('searchToggle').addEventListener('click', function(e) {
+            e.preventDefault();
+            var searchForm = document.getElementById('searchForm');
+            if (searchForm.style.display === 'none' || searchForm.style.display === '') {
+                searchForm.style.display = 'block';
+            } else {
+                searchForm.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

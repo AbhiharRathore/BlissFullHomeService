@@ -1,44 +1,51 @@
-{% extends 'base.html' %}
-{% block title %}Customer Login - BlissfulHome{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow-lg border-0 rounded-4">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle mb-3"
-                            style="width:70px;height:70px;">
-                            <i class="bi bi-person-fill fs-2 text-primary"></i>
-                        </div>
-                        <h3 class="fw-bold">Customer Login</h3>
-                        <p class="text-muted">Welcome back! Sign in to your account</p>
-                    </div>
-                    <form method="POST" action="{{ url_for('auth.user_login') }}">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Username"
-                                required>
-                            <label for="username"><i class="bi bi-person me-2"></i>Username</label>
-                        </div>
-                        <div class="form-floating mb-4">
-                            <input type="password" class="form-control" id="password" name="password"
-                                placeholder="Password" required>
-                            <label for="password"><i class="bi bi-lock me-2"></i>Password</label>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
-                            <i class="bi bi-box-arrow-in-right me-2"></i>Login
-                        </button>
-                    </form>
-                    <div class="text-center mt-4">
-                        <p class="text-muted mb-0">Don't have an account? <a href="{{ url_for('auth.user_signup') }}"
-                                class="fw-semibold text-decoration-none">Sign Up</a></p>
-                        <a href="{{ url_for('main.home') }}" class="text-decoration-none small"><i
-                                class="bi bi-arrow-left me-1"></i>Back to Home</a>
-                    </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/signup.css') }}">
+</head>
+
+<body>
+    
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-popup flash-message {{ messages[-1][0] }}" role="alert" aria-live="assertive">
+            {{ messages[-1][1] }}
+        </div>
+       
+       <script>
+            setTimeout(function () {
+                var flashMessage = document.querySelector('.flash-popup');
+                if (flashMessage) {
+                    flashMessage.remove();
+                }
+            }, 5000);
+        </script>
+        {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('auth.user_login') }}" method="POST">
+            <div class="login">
+                <h3 class="title">User Login</h3>
+                <div class="text-input">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Username" required>
+                </div>
+                <div class="text-input">
+                    <label for="pwd">Password</label>
+                    <input type="password" id="pwd" name="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="signin-btn">Login</button>
+                <div class="links">
+                    <a href="{{ url_for('auth.user_signup') }}">New User? Create Your Account</a>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
-</div>
-{% endblock %}
+</body>
+
+</html>

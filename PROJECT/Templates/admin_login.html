@@ -1,42 +1,50 @@
-{% extends 'base.html' %}
-{% block title %}Admin Login - BlissfulHome{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/signup.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h3 class="title">Admin Login</h3>
 
-{% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow-lg border-0 rounded-4">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <div class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 rounded-circle mb-3"
-                            style="width:70px;height:70px;">
-                            <i class="bi bi-shield-lock-fill fs-2 text-danger"></i>
-                        </div>
-                        <h3 class="fw-bold">Admin Login</h3>
-                        <p class="text-muted">Access the admin control panel</p>
-                    </div>
-                    <form method="POST" action="{{ url_for('auth.admin_login') }}">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Username"
-                                required>
-                            <label for="username"><i class="bi bi-person me-2"></i>Username</label>
-                        </div>
-                        <div class="form-floating mb-4">
-                            <input type="password" class="form-control" id="password" name="password"
-                                placeholder="Password" required>
-                            <label for="password"><i class="bi bi-lock me-2"></i>Password</label>
-                        </div>
-                        <button type="submit" class="btn btn-danger w-100 py-2 fw-semibold">
-                            <i class="bi bi-box-arrow-in-right me-2"></i>Login
-                        </button>
-                    </form>
-                    <div class="text-center mt-4">
-                        <a href="{{ url_for('main.home') }}" class="text-decoration-none"><i
-                                class="bi bi-arrow-left me-1"></i>Back to Home</a>
-                    </div>
-                </div>
+        <form id="loginForm" action="{{ url_for('auth.admin_login') }}" method="POST">
+            <div class="text-input">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter Username" required>
             </div>
-        </div>
+
+            <div class="text-input">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter Password" required>
+            </div>
+
+            <button class="signin-btn" type="submit">Login</button>
+        </form>
+
+        <div class="spinner" id="spinner"></div>
+
+        <!-- Flash message container -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-popup {{ messages[0][0] }}">
+                    {{ messages[0][1] }}
+                </div>
+            {% endif %}
+        {% endwith %}
     </div>
-</div>
-{% endblock %}
+
+    <script>
+        window.onload = function() {
+            const flashPopup = document.querySelector('.flash-popup');
+            if (flashPopup) {
+                setTimeout(function() {
+                    flashPopup.style.opacity = 0;
+                }, 5000);
+            }
+        };
+    </script>
+</body>
+</html>

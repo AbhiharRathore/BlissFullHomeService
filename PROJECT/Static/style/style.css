@@ -1,202 +1,37 @@
-/* ==============================
-   BlissfulHome - Custom Styles (Slate & Teal Theme)
-   ============================== */
-
-:root {
-    --primary-color: #3A506B;
-    /* Slate Blue - Navbar/Primary Buttons */
-    --secondary-color: #5BC0BE;
-    /* Soft Teal - Accents/Highlights */
-    --bg-color: #F0F5F9;
-    /* Light Blue-Gray - Background */
-    --card-bg: #FFFFFF;
-    /* White - Cards */
-    --text-main: #1C2541;
-    /* Dark Blue/Black - Main Text */
-    --text-muted: #6C757D;
-    /* Gray - Secondary Text */
-    --accent-color: #FF6B6B;
-    /* Soft Red/Coral - Alerts/Important */
+table {
+    background: #d4ced4;
+    width: 100%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    font-size: 18px;
+    border-radius: 8px;
+    margin-bottom: 0;
 }
 
-/* Base */
-body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-main);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+table, th, td {
+    border: 1px solid #bdc3c7;
 }
 
-main {
-    flex: 1;
+th {
+    background-color: #3498db;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
 }
 
-/* Navbar */
-.navbar {
-    background-color: var(--primary-color) !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+td {
+    padding: 10px;
+    text-align: center;
 }
 
-.navbar-brand {
-    font-size: 1.4rem;
-    letter-spacing: -0.5px;
-    font-weight: 700;
+tr:nth-child(even) {
+    background-color: #ecf0f1;
 }
 
-.nav-link {
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.9) !important;
+tr:hover {
+    background-color: #bbe2c3;
 }
 
-.nav-link:hover {
-    color: var(--secondary-color) !important;
-}
-
-/* Headings */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    color: var(--text-main);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-}
-
-/* Cards */
-.card {
-    background-color: var(--card-bg);
-    border: none;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    margin-bottom: 1.5rem;
-}
-
-.card-header {
-    background-color: rgba(0, 0, 0, 0.03);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    font-weight: 600;
-    color: var(--primary-color);
-}
-
-/* Buttons */
-.btn {
-    border-radius: 10px;
-    font-weight: 600;
-    padding: 10px 20px;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 0.5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.btn-primary {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-}
-
-.btn-primary:hover {
-    background-color: #2c3e52;
-    border-color: #2c3e52;
-}
-
-.btn-secondary {
-    background-color: #6C757D;
-    border-color: #6C757D;
-}
-
-.btn-outline-light:hover {
-    background-color: var(--secondary-color);
-    border-color: var(--secondary-color);
-    color: #fff;
-}
-
-/* Form Controls */
-.form-control,
-.form-select {
-    border-radius: 10px;
-    border: 1px solid #dee2e6;
-    padding: 10px 15px;
-    background-color: #fcfcfc;
-}
-
-.form-control:focus,
-.form-select:focus {
-    border-color: var(--secondary-color);
-    box-shadow: 0 0 0 0.25rem rgba(91, 192, 190, 0.25);
-}
-
-.form-floating>label {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-}
-
-/* Tables */
-.table {
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-.table thead th {
-    background-color: #f8f9fa;
-    color: var(--text-main);
-    border-bottom: 2px solid #e9ecef;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 0.05em;
-}
-
-.table td {
-    vertical-align: middle;
-    border-bottom: 1px solid #f0f0f0;
-    color: #495057;
-}
-
-/* Badges */
-.badge {
-    padding: 0.5em 0.8em;
-    font-weight: 600;
-    border-radius: 6px;
-}
-
-/* Alerts */
-.alert {
-    border-radius: 12px;
-    border: none;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-/* Links */
-a {
-    color: var(--primary-color);
-    text-decoration: none;
-}
-
-a:hover {
-    color: var(--secondary-color);
-    text-decoration: underline;
-}
-
-/* Smooth transitions */
-.card,
-.btn,
-.nav-link,
-.table tr,
-.form-control {
-    transition: all 0.2s ease-in-out;
-}
-
-/* Footer */
-footer {
-    background-color: var(--primary-color) !important;
-    margin-top: auto;
-    padding: 2rem 0;
-}
-
-footer p {
-    color: rgba(255, 255, 255, 0.8);
+td, th {
+    border-radius: 5px;
 }

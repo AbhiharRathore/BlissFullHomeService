@@ -1,93 +1,100 @@
-{% extends 'base.html' %}
-{% block title %}Professional Profile - BlissfulHome{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Professional Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/profileedit.css') }}">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header"> </div>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('main.professional_dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+        </ul>
+    </div>
 
-{% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card border-0 shadow-lg rounded-4">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 rounded-circle mb-3"
-                            style="width:80px;height:80px;">
-                            <i class="bi bi-person-badge fs-1 text-success"></i>
-                        </div>
-                        <h3 class="fw-bold">Professional Profile</h3>
-                        <p class="text-muted">
-                            Service: <span class="badge bg-info text-dark">{{ professional.service_type }}</span>
-                            {% if professional.rating %}
-                            | Rating: <span class="text-warning"><i class="bi bi-star-fill"></i> {{
-                                "%.1f"|format(professional.rating) }}</span>
-                            {% endif %}
-                            | Status:
-                            {% if professional.status == 'approved' %}
-                            <span class="badge bg-success">Approved</span>
-                            {% elif professional.status == 'pending' %}
-                            <span class="badge bg-warning text-dark">Pending</span>
-                            {% else %}
-                            <span class="badge bg-secondary">{{ professional.status }}</span>
-                            {% endif %}
-                        </p>
+    <!-- Content Area -->
+    <div class="content">
+        <div class="profile-container">
+            <h1>Edit Professional Profile</h1>
+
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul class="flash-messages">
+                        {% for category, message in messages %}
+                            <li class="flash-{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Profile Info -->
+            <div class="profile-card">
+                <h2>Profile Information</h2>
+                <div class="profile-details">
+                    <div class="profile-item">
+                        <strong>Name:</strong> <span>{{ professional.name }}</span>
                     </div>
-                    <form method="POST" action="{{ url_for('main.edit_professional_profile') }}">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        value="{{ professional.name }}" required>
-                                    <label for="name"><i class="bi bi-person me-2"></i>Name</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="username" name="username"
-                                        value="{{ professional.username }}" required>
-                                    <label for="username"><i class="bi bi-at me-2"></i>Username</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="tel" class="form-control" id="phone" name="phone"
-                                        value="{{ professional.phone }}" required>
-                                    <label for="phone"><i class="bi bi-phone me-2"></i>Phone</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="number" class="form-control" id="experience" name="experience"
-                                        value="{{ professional.experience }}" required min="0">
-                                    <label for="experience"><i class="bi bi-star me-2"></i>Years of Experience</label>
-                                </div>
-                            </div>
-                            <div class="col-md-8">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="address" name="address"
-                                        value="{{ professional.address or '' }}">
-                                    <label for="address"><i class="bi bi-geo-alt me-2"></i>Address</label>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="pincode" name="pincode"
-                                        value="{{ professional.pincode or '' }}" maxlength="6">
-                                    <label for="pincode"><i class="bi bi-mailbox me-2"></i>Pincode</label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <textarea class="form-control" id="description" name="description"
-                                        style="height:80px">{{ professional.description or '' }}</textarea>
-                                    <label for="description"><i class="bi bi-card-text me-2"></i>About yourself</label>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-success w-100 py-2 fw-semibold mt-4">
-                            <i class="bi bi-save me-2"></i>Update Profile
-                        </button>
-                    </form>
+                    <div class="profile-item">
+                        <strong>Username:</strong> <span>{{ professional.username }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <strong>Phone Number:</strong> <span>{{ professional.phone }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <strong>Service Type:</strong> <span>{{ professional.service_type }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <strong>Experience:</strong> <span>{{ professional.experience }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <strong>Address:</strong> <span>{{ professional.address }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <strong>Pincode:</strong> <span>{{ professional.pincode }}</span>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Edit Form -->
+            <div class="edit-form">
+                <h2>Update Your Information</h2>
+                <form action="{{ url_for('main.edit_professional_profile') }}" method="POST">
+                    <div class="form-group">
+                        <label for="phone">Phone Number:</label>
+                        <input type="text" id="phone" name="phone" value="{{ professional.phone }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="experience">Experience:</label>
+                        <input type="text" id="experience" name="experience" value="{{ professional.experience }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Address:</label>
+                        <input type="text" id="address" name="address" value="{{ professional.address }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pincode">Pincode:</label>
+                        <input type="text" id="pincode" name="pincode" value="{{ professional.pincode }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="submit-btn">Update Profile</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Professional Services. All rights reserved.</p>
+    </footer>
+</body>
+</html>

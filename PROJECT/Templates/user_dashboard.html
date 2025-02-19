@@ -1,138 +1,151 @@
-{% extends 'base.html' %}
-{% block title %}My Dashboard - BlissfulHome{% endblock %}
-
-{% block content %}
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-1"><i class="bi bi-house-heart me-2 text-primary"></i>Welcome, {{ current_user.name
-                }}!</h2>
-            <p class="text-muted mb-0">Find and book home services</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/user.css') }}">
+    <script>
+        function toggleSearch() {
+            var searchBox = document.getElementById("search-box");
+            if (searchBox.style.display === "none" || searchBox.style.display === "") {
+                searchBox.style.display = "block";
+            } else {
+                searchBox.style.display = "none";
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <a href="{{ url_for('main.user_dashboard') }}" class="sidebar-button">Dashboard</a>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="{{ url_for('main.user_profile') }}">My Profile</a></li>
+                <li><a href="javascript:void(0)" onclick="toggleSearch()">Search</a></li> <!-- Toggle Search -->
+                <li><a href="{{ url_for('auth.logout') }}" class="sidebar-button">Logout</a></li>
+            </ul>
         </div>
-    </div>
 
-    <!-- Search -->
-    <div class="card border-0 shadow-sm rounded-3 mb-4">
-        <div class="card-body">
-            <form method="GET" action="{{ url_for('main.user_dashboard') }}" class="row g-2 align-items-end">
-                <div class="col-md-10">
-                    <div class="input-group">
-                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                        <input type="text" name="search" class="form-control"
-                            placeholder="Search services by name or description..." value="{{ search_query }}">
-                    </div>
-                </div>
-                <div class="col-md-2 d-grid">
-                    <button type="submit" class="btn btn-primary"><i class="bi bi-search me-1"></i>Search</button>
-                </div>
-            </form>
-        </div>
-    </div>
+        <!-- Content Area -->
+        <div class="content">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <h2>Welcome back, {{ current_user.name }}!</h2>
+                <p>Looking for services? We have plenty to offer.</p>
 
-    <!-- Available Services -->
-    <h4 class="fw-bold mb-3"><i class="bi bi-grid me-2 text-primary"></i>Available Services</h4>
-    <div class="row g-3 mb-5">
-        {% for service in services %}
-        <div class="col-md-6 col-lg-4">
-            <div class="card border-0 shadow-sm rounded-3 h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h5 class="fw-bold mb-0">{{ service.name }}</h5>
-                        <span class="badge bg-success fs-6">₹{{ service.price }}</span>
-                    </div>
-                    <p class="text-muted small mb-2">{{ service.description }}</p>
-                    {% if service.time_required %}
-                    <p class="mb-3"><i class="bi bi-clock me-1 text-primary"></i><small>{{ service.time_required
-                            }}</small></p>
+                <!-- Flash messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <ul class="flash-messages" style="list-style: none; padding: 0; margin: 15px auto; max-width: 600px;">
+                            {% for category, message in messages %}
+                                <li class="flash-{{ category }}" style="padding: 10px 15px; border-radius: 5px; margin-bottom: 10px; text-align: center; font-weight: bold; {% if category == 'success' %}background-color: #d4edda; color: #155724;{% elif category == 'danger' or category == 'error' %}background-color: #f8d7da; color: #721c24;{% else %}background-color: #d1ecf1; color: #0c5460;{% endif %}">{{ message }}</li>
+                            {% endfor %}
+                        </ul>
                     {% endif %}
-                    <a href="{{ url_for('main.booking', service_id=service.id) }}" class="btn btn-primary btn-sm w-100">
-                        <i class="bi bi-calendar-plus me-1"></i>Book Now
-                    </a>
+                {% endwith %}
+
+                <!-- Search Box -->
+                <div class="search-box" id="search-box" style="display:none;">
+                    <form action="{{ url_for('main.user_dashboard') }}" method="get" class="search-form">
+                        <input type="text" name="search" placeholder="Search services" class="search-input" value="{{ search_query or '' }}">
+                        <button type="submit" class="btn btn-search">Search</button>
+                    </form>
+                </div>
+
+                <!-- Search Summary Section -->
+                {% if search_query %}
+                    <div class="search-summary">
+                        <h4>Search Results for "{{ search_query }}"</h4>
+                        {% if services %}
+                            <p>{{ services|length }} service(s) found matching your search.</p>
+                        {% else %}
+                            <p>No services found for your search query.</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                <!-- Available Services Section -->
+                <div class="available-services">
+                    <h3>Available Services</h3>
+                    <div class="service-list">
+                        {% if services %}
+                            {% for service in services %}
+                                <a href="{{ url_for('main.booking', service_id=service.id) }}" class="service-item">
+                                    <h4>{{ service.name }}</h4>
+                                    <p>{{ service.description }}</p>
+                                    <span class="price">₹{{ service.price }}</span>
+                                </a>
+                            {% endfor %}
+                        {% else %}
+                            <p>No services available.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Service History Section -->
+                <div class="service-history">
+                    <h3>Your Service History</h3>
+                    {% if service_requests %}
+                        <div class="history-list">
+                            {% for sr in service_requests %}
+                                <div class="history-item">
+                                    <h4>{{ sr.service.name }}</h4>
+                                    <p>Status: {{ sr.status }}</p>
+                                    {% if sr.professional %}
+                                        <p>Assigned to: {{ sr.professional.name }}</p>
+                                    {% endif %}
+                                    <p>Date Requested: {{ sr.date_requested.strftime('%Y-%m-%d') if sr.date_requested else 'N/A' }}</p>
+                                    {% if sr.date_completed %}
+                                        <p>Date Completed: {{ sr.date_completed.strftime('%Y-%m-%d') }}</p>
+                                    {% endif %}
+                
+                                    <!-- Button to close the service -->
+                                    {% if sr.status != 'closed' and sr.status != 'completed' and sr.status != 'rejected' %}
+                                    <form action="{{ url_for('main.close_service', request_id=sr.id) }}" method="POST" style="margin-top: 10px;">
+                                        <button type="submit" class="btn btn-danger" style="background-color: #e63946; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Close Service</button>
+                                    </form>
+                                    {% endif %}
+
+                                    <!-- If completed, display rating & review -->
+                                    {% if sr.status == 'completed' and sr.rating %}
+                                        <div style="margin-top: 10px; padding: 8px 12px; background-color: #e8f5e9; border-radius: 4px; border-left: 4px solid #2e7d32;">
+                                            <p style="margin: 0; color: #2e7d32; font-weight: bold;">Your Rating: {{ sr.rating }} / 5 ★</p>
+                                            {% if sr.review %}
+                                                <p style="margin: 4px 0 0 0; color: #555; font-style: italic;">"{{ sr.review }}"</p>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+
+                                    <!-- If the status is 'closed', show the rating form -->
+                                    {% if sr.status == 'closed' %}
+                                        <div class="rating-section" style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee;">
+                                            <form action="{{ url_for('main.submit_rating', service_request_id=sr.id) }}" method="POST">
+                                                <label for="rating-{{ sr.id }}"><strong>Rate the Service:</strong></label>
+                                                <select name="rating" id="rating-{{ sr.id }}" required style="display: block; margin: 8px 0; padding: 6px; border-radius: 4px; border: 1px solid #ccc;">
+                                                    <option value="1">1 Star</option>
+                                                    <option value="2">2 Stars</option>
+                                                    <option value="3">3 Stars</option>
+                                                    <option value="4">4 Stars</option>
+                                                    <option value="5" selected>5 Stars</option>
+                                                </select>
+                                                <textarea name="review" placeholder="Leave your review (optional)" style="width: 100%; max-width: 400px; padding: 8px; border-radius: 4px; border: 1px solid #ccc; display: block; margin-bottom: 10px;"></textarea>
+                                                <button type="submit" style="background-color: #1d3557; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Submit Rating</button>
+                                            </form>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p>You haven't booked any services yet.</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
-        {% else %}
-        <div class="col-12">
-            <div class="alert alert-info"><i class="bi bi-info-circle me-2"></i>No services available at the moment.
-            </div>
-        </div>
-        {% endfor %}
     </div>
-
-    <!-- My Service Requests -->
-    <h4 class="fw-bold mb-3"><i class="bi bi-clipboard-check me-2 text-primary"></i>My Service Requests</h4>
-    <div class="card border-0 shadow-sm rounded-3">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>ID</th>
-                            <th>Service</th>
-                            <th>Professional</th>
-                            <th>Requested</th>
-                            <th>Status</th>
-                            <th>Rating</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for req in service_requests %}
-                        <tr>
-                            <td><span class="badge bg-secondary">{{ req.id }}</span></td>
-                            <td class="fw-semibold">{{ req.service.name if req.service else 'N/A' }}</td>
-                            <td>{{ req.professional.name if req.professional else '<span class="text-muted">Not
-                                    assigned</span>'|safe }}</td>
-                            <td class="small">{{ req.date_requested.strftime('%d %b %Y') if req.date_requested else
-                                'N/A' }}</td>
-                            <td>
-                                {% if req.status == 'pending' %}
-                                <span class="badge bg-warning text-dark">Pending</span>
-                                {% elif req.status == 'accepted' %}
-                                <span class="badge bg-primary">Accepted</span>
-                                {% elif req.status == 'closed' %}
-                                <span class="badge bg-secondary">Closed</span>
-                                {% elif req.status == 'completed' %}
-                                <span class="badge bg-success">Completed</span>
-                                {% elif req.status == 'rejected' %}
-                                <span class="badge bg-danger">Rejected</span>
-                                {% else %}
-                                <span class="badge bg-light text-dark">{{ req.status }}</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if req.rating %}
-                                <span class="text-warning"><i class="bi bi-star-fill"></i> {{ req.rating }}/5</span>
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if req.status == 'pending' %}
-                                <a href="{{ url_for('main.edit_request', request_id=req.id) }}"
-                                    class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i></a>
-                                {% elif req.status == 'accepted' %}
-                                <form action="{{ url_for('main.close_service', request_id=req.id) }}" method="POST"
-                                    class="d-inline">
-                                    <button class="btn btn-outline-success btn-sm"><i
-                                            class="bi bi-check-lg me-1"></i>Close</button>
-                                </form>
-                                {% elif req.status == 'closed' %}
-                                <a href="{{ url_for('main.submit_rating', service_request_id=req.id) }}"
-                                    class="btn btn-outline-warning btn-sm"><i class="bi bi-star me-1"></i>Rate</a>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="7" class="text-center text-muted py-4">No service requests yet. Book a service
-                                above!</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
+</body>
+</html>

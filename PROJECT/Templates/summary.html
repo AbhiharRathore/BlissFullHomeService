@@ -1,148 +1,93 @@
-{% extends 'base.html' %}
-{% block title %}Summary - BlissfulHome{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/admindashboard.css') }}">
+    <title>Summary - Admin Panel</title>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <h2 class="sidebar-title">Admin Panel</h2>
+            <ul>
+                <li><a href="{{ url_for('main.admin_dashboard') }}" class="sidebar-link">Dashboard</a></li>
+                <li><a href="{{ url_for('main.service_manage') }}" class="sidebar-link">Manage Services</a></li>
+                <li><a href="{{ url_for('main.summary') }}" class="sidebar-link">Summary</a></li>
+                <li><a href="{{ url_for('main.view_blocked_professionals') }}" class="sidebar-link">Blocked Professionals</a></li>
+                <li><a href="{{ url_for('auth.logout') }}" class="sidebar-link logout">Logout</a></li>
+            </ul>
+        </nav>
 
-{% block extra_css %}
-<style>
-    .chart-container {
-        position: relative;
-        height: 350px;
-        max-width: 100%;
-    }
-</style>
-{% endblock %}
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Flash message container -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages" style="margin-bottom: 20px;">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}" style="padding: 12px 15px; margin-bottom: 10px; border-radius: 5px; {% if category == 'danger' or category == 'error' %}background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;{% elif category == 'success' %}background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;{% elif category == 'warning' %}background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba;{% else %}background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
 
-{% block content %}
-<div class="container py-4">
-    <h2 class="fw-bold mb-4"><i class="bi bi-bar-chart me-2 text-primary"></i>Platform Summary</h2>
+            <!-- Header -->
+            <header class="header">
+                <h1>Platform Summary</h1>
+                <p>Real-time overview of services, users, professionals, and service requests.</p>
+            </header>
 
-    <!-- Stats Cards -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm rounded-3 text-center p-3">
-                <h3 class="fw-bold text-primary mb-0">{{ total_services }}</h3>
-                <small class="text-muted">Services</small>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm rounded-3 text-center p-3">
-                <h3 class="fw-bold text-success mb-0">{{ total_customers }}</h3>
-                <small class="text-muted">Customers</small>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm rounded-3 text-center p-3">
-                <h3 class="fw-bold text-warning mb-0">{{ total_professionals }}</h3>
-                <small class="text-muted">Professionals</small>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm rounded-3 text-center p-3">
-                <h3 class="fw-bold text-info mb-0">{{ total_requests }}</h3>
-                <small class="text-muted">Total Requests</small>
-            </div>
-        </div>
-    </div>
+            <!-- General Statistics Section -->
+            <div class="section-container">
+                <h2 style="font-size: 20px; color: #2d3a4b; margin-bottom: 15px;">General Statistics</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+                    <div class="card" style="text-align: center; border-top: 4px solid #1e90ff; padding: 25px 20px;">
+                        <div class="card-header" style="font-size: 16px; color: #666; margin-bottom: 10px;">Total Services</div>
+                        <div class="card-body" style="font-size: 36px; font-weight: bold; color: #1e90ff; padding: 0;">{{ total_services }}</div>
+                    </div>
 
-    <!-- Charts Row -->
-    <div class="row g-4">
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm rounded-3">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 fw-bold"><i class="bi bi-pie-chart me-2 text-primary"></i>Requests by Service</h5>
+                    <div class="card" style="text-align: center; border-top: 4px solid #28a745; padding: 25px 20px;">
+                        <div class="card-header" style="font-size: 16px; color: #666; margin-bottom: 10px;">Total Customers</div>
+                        <div class="card-body" style="font-size: 36px; font-weight: bold; color: #28a745; padding: 0;">{{ total_customers }}</div>
+                    </div>
+
+                    <div class="card" style="text-align: center; border-top: 4px solid #17a2b8; padding: 25px 20px;">
+                        <div class="card-header" style="font-size: 16px; color: #666; margin-bottom: 10px;">Total Professionals</div>
+                        <div class="card-body" style="font-size: 36px; font-weight: bold; color: #17a2b8; padding: 0;">{{ total_professionals }}</div>
+                    </div>
+
+                    <div class="card" style="text-align: center; border-top: 4px solid #6c757d; padding: 25px 20px;">
+                        <div class="card-header" style="font-size: 16px; color: #666; margin-bottom: 10px;">Total Service Requests</div>
+                        <div class="card-body" style="font-size: 36px; font-weight: bold; color: #6c757d; padding: 0;">{{ total_requests }}</div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="chart-container">
-                        <canvas id="serviceChart"></canvas>
+            </div>
+
+            <!-- Service Requests Breakdown Section -->
+            <div class="section-container" style="margin-top: 30px;">
+                <h2 style="font-size: 20px; color: #2d3a4b; margin-bottom: 15px;">Service Requests Status Breakdown</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+                    <div class="card" style="text-align: center; border-top: 4px solid #ffc107; padding: 25px 20px;">
+                        <div class="card-header" style="font-size: 16px; color: #666; margin-bottom: 10px;">Pending Requests</div>
+                        <div class="card-body" style="font-size: 36px; font-weight: bold; color: #e0a800; padding: 0;">{{ pending_requests }}</div>
+                    </div>
+
+                    <div class="card" style="text-align: center; border-top: 4px solid #28a745; padding: 25px 20px;">
+                        <div class="card-header" style="font-size: 16px; color: #666; margin-bottom: 10px;">Completed Requests</div>
+                        <div class="card-body" style="font-size: 36px; font-weight: bold; color: #28a745; padding: 0;">{{ completed_requests }}</div>
+                    </div>
+
+                    <div class="card" style="text-align: center; border-top: 4px solid #6f42c1; padding: 25px 20px;">
+                        <div class="card-header" style="font-size: 16px; color: #666; margin-bottom: 10px;">Closed Requests</div>
+                        <div class="card-body" style="font-size: 36px; font-weight: bold; color: #6f42c1; padding: 0;">{{ closed_requests }}</div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm rounded-3">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 fw-bold"><i class="bi bi-star-half me-2 text-warning"></i>Professional Ratings</h5>
-                </div>
-                <div class="card-body">
-                    <div class="chart-container">
-                        <canvas id="ratingChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script>
-    // Service Request Chart
-    const serviceLabels = {{ chart_labels | tojson }};
-    const serviceData = {{ chart_data | tojson }};
-
-    if (serviceLabels.length > 0) {
-        new Chart(document.getElementById('serviceChart'), {
-            type: 'doughnut',
-            data: {
-                labels: serviceLabels,
-                datasets: [{
-                    data: serviceData,
-                    backgroundColor: [
-                        '#0d6efd', '#198754', '#ffc107', '#dc3545',
-                        '#0dcaf0', '#6f42c1', '#fd7e14', '#20c997',
-                        '#6610f2', '#d63384'
-                    ],
-                    borderWidth: 2,
-                    borderColor: '#fff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom' }
-                }
-            }
-        });
-    } else {
-        document.getElementById('serviceChart').parentElement.innerHTML = '<p class="text-muted text-center py-5">No data available yet.</p>';
-    }
-
-    // Professional Rating Chart
-    const ratingLabels = {{ rating_labels | tojson }};
-    const ratingData = {{ rating_data | tojson }};
-
-    if (ratingLabels.length > 0) {
-        new Chart(document.getElementById('ratingChart'), {
-            type: 'bar',
-            data: {
-                labels: ratingLabels,
-                datasets: [{
-                    label: 'Rating',
-                    data: ratingData,
-                    backgroundColor: '#ffc107',
-                    borderColor: '#e0a800',
-                    borderWidth: 1,
-                    borderRadius: 8
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 5,
-                        ticks: { stepSize: 1 }
-                    }
-                },
-                plugins: {
-                    legend: { display: false }
-                }
-            }
-        });
-    } else {
-        document.getElementById('ratingChart').parentElement.innerHTML = '<p class="text-muted text-center py-5">No ratings yet.</p>';
-    }
-</script>
-{% endblock %}
+</body>
+</html>

@@ -1,35 +1,65 @@
-{% extends 'base.html' %}
-{% block title %}Our Services - BlissfulHome{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Services - BlissfulHome Services</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
+</head>
+<body>
+    <header class="header-container">
+        <div class="logo-container">
+            <a href="{{ url_for('main.home') }}">
+                <img class="logo" src="{{ url_for('static', filename='images/BHS LOGO.png') }}" alt="BlissfulHome Logo">
+            </a>
+        </div>
+        <nav class="navigation">
+            <ul>
+                <li><a href="{{ url_for('main.home') }}">Home</a></li>
+                <li><a href="{{ url_for('auth.user_login') }}">Login</a></li>
+                <li><a href="{{ url_for('auth.user_signup') }}">Sign Up</a></li>
+            </ul>
+        </nav>
+    </header>
 
-{% block content %}
-<div class="container py-5">
-    <div class="text-center mb-5">
-        <h2 class="display-6 fw-bold">Our <span class="text-primary">Services</span></h2>
-        <p class="lead text-muted">Browse our professional home services</p>
+    <div style="max-width: 1000px; margin: 40px auto; padding: 20px;">
+        <h2 style="text-align: center; color: #2c3e50; margin-bottom: 20px; font-size: 2.5em;">Our Available Services</h2>
+        
+        <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+            <thead>
+                <tr style="background-color: #2c3e50; color: white; text-align: left;">
+                    <th style="padding: 15px;">#</th>
+                    <th style="padding: 15px;">Service Name</th>
+                    <th style="padding: 15px;">Description</th>
+                    <th style="padding: 15px;">Time Required</th>
+                    <th style="padding: 15px;">Base Price</th>
+                    <th style="padding: 15px; text-align: center;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for s in services %}
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 15px;">{{ s.id }}</td>
+                <td style="padding: 15px; font-weight: bold; color: #3498db;">{{ s.name }}</td>
+                <td style="padding: 15px; color: #555;">{{ s.description }}</td>
+                <td style="padding: 15px; color: #555;">{{ s.time_required }} mins</td>
+                <td style="padding: 15px; font-weight: bold; color: #27ae60;">₹{{ s.price }}</td>
+                <td style="padding: 15px; text-align: center;">
+                    <a href="{{ url_for('main.booking', service_id=s.id) }}" style="display: inline-block; background-color: #3498db; color: white; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-weight: bold;">Book Now</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" style="padding: 20px; text-align: center; color: #888;">No services available at this time.</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
-    <div class="row g-4">
-        {% for service in services %}
-        <div class="col-md-6 col-lg-4">
-            <div class="card border-0 shadow-sm rounded-3 h-100">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h5 class="fw-bold mb-0">{{ service.name }}</h5>
-                        <span class="badge bg-success fs-6">₹{{ service.price }}</span>
-                    </div>
-                    <p class="text-muted mb-2">{{ service.description }}</p>
-                    {% if service.time_required %}
-                    <p class="mb-0"><i class="bi bi-clock me-1 text-primary"></i><small>{{ service.time_required
-                            }}</small></p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        {% else %}
-        <div class="col-12">
-            <div class="alert alert-info text-center"><i class="bi bi-info-circle me-2"></i>No services available at the
-                moment.</div>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-{% endblock %}
+
+    <footer>
+        <p>&copy; 2024 Blissful Home. All rights reserved.</p>
+    </footer>
+</body>
+</html>

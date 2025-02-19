@@ -1,73 +1,85 @@
-{% extends 'base.html' %}
-{% block title %}Customer Sign Up - BlissfulHome{% endblock %}
-
-{% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-7 col-lg-6">
-            <div class="card shadow-lg border-0 rounded-4">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle mb-3"
-                            style="width:70px;height:70px;">
-                            <i class="bi bi-person-plus-fill fs-2 text-primary"></i>
-                        </div>
-                        <h3 class="fw-bold">Create Account</h3>
-                        <p class="text-muted">Join as a customer to book home services</p>
-                    </div>
-                    <form method="POST" action="{{ url_for('auth.user_signup') }}" novalidate>
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Full Name"
-                                required minlength="2">
-                            <label for="name"><i class="bi bi-person me-2"></i>Full Name</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Username"
-                                required minlength="3">
-                            <label for="username"><i class="bi bi-at me-2"></i>Username</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone" required
-                                pattern="[0-9]{10}">
-                            <label for="phone"><i class="bi bi-phone me-2"></i>Phone Number</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="address" name="address" placeholder="Address"
-                                required>
-                            <label for="address"><i class="bi bi-geo-alt me-2"></i>Address</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="pincode" name="pincode" placeholder="Pincode"
-                                required pattern="[0-9]{6}" maxlength="6">
-                            <label for="pincode"><i class="bi bi-mailbox me-2"></i>Pincode</label>
-                        </div>
-                        <div class="row g-2 mb-3">
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="password" class="form-control" id="pwd" name="pwd"
-                                        placeholder="Password" required minlength="4">
-                                    <label for="pwd"><i class="bi bi-lock me-2"></i>Password</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="password" class="form-control" id="confpwd" name="confpwd"
-                                        placeholder="Confirm Password" required>
-                                    <label for="confpwd"><i class="bi bi-lock-fill me-2"></i>Confirm</label>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
-                            <i class="bi bi-person-check me-2"></i>Create Account
-                        </button>
-                    </form>
-                    <div class="text-center mt-4">
-                        <p class="text-muted mb-0">Already have an account? <a href="{{ url_for('auth.user_login') }}"
-                                class="fw-semibold text-decoration-none">Login</a></p>
-                    </div>
-                </div>
-            </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Signup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/signup.css') }}">
+</head>
+<body>
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-popup {{ messages[-1][0] }}">
+            {{ messages[-1][1] }}
         </div>
+        {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('auth.user_signup') }}" method="POST" onsubmit="return validateForm()">
+            <h3 class="title">Create Account</h3>
+
+            <!-- Full Name -->
+            <div class="text-input">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter your full name" required aria-required="true">
+            </div>
+
+            <!-- Username -->
+            <div class="text-input">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Choose a username" required aria-required="true">
+            </div>
+
+            <!-- Phone Number -->
+            <div class="text-input">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required aria-required="true">
+            </div>
+
+            <!-- Address -->
+            <div class="text-input">
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" placeholder="Enter your address" required aria-required="true">
+            </div>
+
+            <!-- Pincode -->
+            <div class="text-input">
+                <label for="pincode">Pincode</label>
+                <input type="text" id="pincode" name="pincode" placeholder="Enter your pincode" required pattern="\d{6}" aria-required="true">
+            </div>
+
+            <!-- Password -->
+            <div class="text-input">
+                <label for="pwd">Password <span class="hint">(min. 5 characters)</span></label>
+                <input type="password" id="pwd" name="pwd" placeholder="Create a password" required minlength="5" aria-required="true">
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="text-input">
+                <label for="confpwd">Confirm Password</label>
+                <input type="password" id="confpwd" name="confpwd" placeholder="Re-enter your password" required minlength="5" aria-required="true">
+            </div>
+
+            <button type="submit" class="signin-btn">Signup</button>
+
+            <div class="create">
+                <a href="{{ url_for('auth.user_login') }}">Already have an account? Login Here</a>
+            </div>
+        </form>
     </div>
-</div>
-{% endblock %}
+
+    <script>
+        function validateForm() {
+            const pwd = document.getElementById('pwd').value;
+            const confpwd = document.getElementById('confpwd').value;
+
+            if (pwd !== confpwd) {
+                alert("Passwords do not match.");
+                return false;  // Prevent form submission
+            }
+            return true;  // Allow form submission
+        }
+    </script>
+</body>
+</html>

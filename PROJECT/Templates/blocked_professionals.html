@@ -1,50 +1,84 @@
-{% extends 'base.html' %}
-{% block title %}Blocked Professionals - BlissfulHome{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blocked Professionals</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/admindashboard.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <h2 class="sidebar-title">Admin Panel</h2>
+            <ul>
+                <li><a href="{{ url_for('main.admin_dashboard') }}" class="sidebar-link">Dashboard</a></li>
+                <li><a href="{{ url_for('main.service_manage') }}" class="sidebar-link">Manage Services</a></li>
+                <li><a href="{{ url_for('main.summary') }}" class="sidebar-link">Summary</a></li>
+                <li><a href="{{ url_for('main.view_blocked_professionals') }}" class="sidebar-link">Blocked Professionals</a></li>
+                <li><a href="{{ url_for('auth.logout') }}" class="sidebar-link logout">Logout</a></li>
+            </ul>
+        </nav>
 
-{% block content %}
-<div class="container py-4">
-    <h2 class="fw-bold mb-4"><i class="bi bi-person-slash me-2 text-danger"></i>Blocked Professionals</h2>
-    <div class="card border-0 shadow-sm rounded-3">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Username</th>
-                            <th>Service Type</th>
-                            <th>Experience</th>
-                            <th>Phone</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for p in blocked_professionals %}
-                        <tr>
-                            <td><span class="badge bg-secondary">{{ p.id }}</span></td>
-                            <td class="fw-semibold">{{ p.name }}</td>
-                            <td>{{ p.username }}</td>
-                            <td><span class="badge bg-info text-dark">{{ p.service_type }}</span></td>
-                            <td>{{ p.experience }} yrs</td>
-                            <td>{{ p.phone }}</td>
-                            <td>
-                                <form action="{{ url_for('main.unblock_professional', professional_id=p.id) }}"
-                                    method="POST" class="d-inline">
-                                    <button class="btn btn-success btn-sm"><i
-                                            class="bi bi-person-check me-1"></i>Unblock</button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="7" class="text-center text-muted py-4">No blocked professionals.</td>
-                        </tr>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Flash message container -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages" style="margin-bottom: 20px;">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}" style="padding: 12px 15px; margin-bottom: 10px; border-radius: 5px; {% if category == 'danger' or category == 'error' %}background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;{% elif category == 'success' %}background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;{% elif category == 'warning' %}background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba;{% else %}background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;{% endif %}">
+                                {{ message }}
+                            </div>
                         {% endfor %}
-                    </tbody>
-                </table>
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Header -->
+            <header class="header">
+                <h1>Blocked Professionals</h1>
+                <p>Below is the list of professionals who are currently blocked. You can unblock them as needed.</p>
+            </header>
+
+            <!-- Blocked Professionals Section -->
+            <div class="section-container">
+                <div class="card">
+                    <div class="card-header">Blocked Professionals</div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Service Type</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for professional in blocked_professionals %}
+                                    <tr>
+                                        <td>{{ professional.id }}</td>
+                                        <td>{{ professional.name }}</td>
+                                        <td>{{ professional.service_type }}</td>
+                                        <td>{{ professional.status }}</td>
+                                        <td>
+                                            <form action="{{ url_for('main.unblock_professional', professional_id=professional.id) }}" method="POST" style="display:inline;">
+                                                <input type="hidden" name="professional_id" value="{{ professional.id }}">
+                                                <button type="submit" class="btn btn-success">Unblock</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr><td colspan="5">No blocked professionals found.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+</body>
+</html>

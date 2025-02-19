@@ -1,12 +1,13 @@
-from flask import Flask, session, redirect, url_for, request, flash
+from flask import Flask, session, redirect, url_for, request, flash, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, current_user
 from datetime import timedelta
 import os
 import logging
-from PROJECT.models import Admin, User, ServiceProfessional, Service, db
+from PROJECT.models import Admin, User, ServiceProfessional, db
 
 login_manager = LoginManager()
+
 
 def create_app():
     app = Flask(__name__)
@@ -21,36 +22,35 @@ def create_app():
 
     db.init_app(app)
     login_manager.init_app(app)
+    login_manager.login_view = 'auth.user_login'
+    login_manager.login_message = 'Please log in to access this page.'
+    login_manager.login_message_category = 'warning'
 
     @login_manager.user_loader
     def load_user(user_id):
         role = session.get('role')
-        
+
         if role == 'admin':
             return Admin.query.get(int(user_id))
         elif role == 'service_professional':
-            prof = ServiceProfessional.query.get(int(user_id))
-            if prof and prof.status == 'blocked':
-                return None
-            return prof
+            return ServiceProfessional.query.get(int(user_id))
         elif role == 'user':
-            user = User.query.get(int(user_id))
-            if user and user.blocked:
-                return None
-            return user
+            return User.query.get(int(user_id))
         return None
 
-    @login_manager.unauthorized_handler
-    def unauthorized():
-        flash('Please log in to access this page.', 'warning')
-        return redirect(url_for('main.home'))
+    # Custom error handlers
+    @app.errorhandler(404)
+    def not_found_error(error):
+        return render_template('errors/404.html'), 404
 
-    @app.before_request
-    def clear_stale_session():
-        # If user is not authenticated (e.g. blocked/deleted and load_user returned None)
-        # but session still has data, clear it to fix UI state
-        if not current_user.is_authenticated and 'role' in session:
-            session.clear()
+    @app.errorhandler(403)
+    def forbidden_error(error):
+        return render_template('errors/403.html'), 403
+
+    @app.errorhandler(500)
+    def internal_error(error):
+        db.session.rollback()
+        return render_template('errors/500.html'), 500
 
     # Register Blueprints
     from .auth import auth as auth_blueprint
@@ -64,27 +64,16 @@ def create_app():
         try:
             db.create_all()
 
-            # Seed admin if none exists
+            # Seed admin if no admin exists
             if not Admin.query.first():
-                dummy_admin = Admin(username='admin', password='admin123', role=0)
+                dummy_admin = Admin(username='admin', role=0)
+                dummy_admin.set_password('admin123')
                 db.session.add(dummy_admin)
                 db.session.commit()
 
-            # Seed sample services if none exist
-            if not Service.query.first():
-                sample_services = [
-                    Service(name='AC Servicing', description='Complete AC maintenance including cleaning, gas refill and repair', price=500, time_required='2 hours'),
-                    Service(name='Plumbing', description='Fix leaks, install fixtures, pipe repairs and bathroom fittings', price=300, time_required='1-2 hours'),
-                    Service(name='Electrical', description='Wiring, switch repair, fan installation and electrical safety checks', price=400, time_required='1-3 hours'),
-                    Service(name='House Cleaning', description='Deep cleaning of rooms, kitchen, bathroom and common areas', price=600, time_required='3-4 hours'),
-                    Service(name='Salon at Home', description='Haircut, facial, manicure, pedicure and beauty treatments at your doorstep', price=800, time_required='1-2 hours'),
-                    Service(name='Gardening', description='Lawn mowing, plant care, landscaping and garden maintenance', price=350, time_required='2-3 hours'),
-                    Service(name='Pest Control', description='Termite treatment, cockroach control, mosquito fogging and rodent control', price=700, time_required='2-3 hours'),
-                    Service(name='Painting', description='Interior and exterior wall painting, texture work and waterproofing', price=1500, time_required='1-2 days'),
-                ]
-                for s in sample_services:
-                    db.session.add(s)
-                db.session.commit()
+            # Seed demo data if no services exist
+            from PROJECT.seed import seed_demo_data
+            seed_demo_data()
 
         except Exception as e:
             logging.error(f"Error during app setup: {e}")

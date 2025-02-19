@@ -1,210 +1,110 @@
-{% extends 'base.html' %}
-{% block title %}BlissfulHome - Home Services at Your Doorstep{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BlissfulHome Services - Your trusted partner for essential home services.">
+    <title>BlissfulHome Services</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/home.css') }}">
+</head>
+<body>
+    <header class="header-container">
+        <div class="logo-container">
+            <img class="logo" src="{{ url_for('static', filename='images/BHS LOGO.png') }}" alt="BlissfulHome Logo">
+        </div>
+        <nav class="navigation">
+            <ul>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
 
-{% block extra_css %}
-<style>
-    .hero-section {
-        background: linear-gradient(135deg, #0d6efd 0%, #6610f2 50%, #6f42c1 100%);
-        min-height: 85vh;
-        display: flex;
-        align-items: center;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .hero-section::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -20%;
-        width: 600px;
-        height: 600px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.05);
-    }
-
-    .hero-section::after {
-        content: '';
-        position: absolute;
-        bottom: -30%;
-        left: -10%;
-        width: 400px;
-        height: 400px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.03);
-    }
-
-    .role-card {
-        transition: all 0.3s ease;
-        border: 2px solid transparent;
-        cursor: pointer;
-    }
-
-    .role-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-        border-color: #0d6efd;
-    }
-
-    .role-card .icon-wrap {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1rem;
-        font-size: 2rem;
-    }
-
-    .service-showcase-card {
-        transition: all 0.3s ease;
-        border: none;
-        border-radius: 16px;
-    }
-
-    .service-showcase-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .service-icon {
-        width: 60px;
-        height: 60px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-    }
-
-    .stats-number {
-        font-size: 2.5rem;
-        font-weight: 800;
-        background: linear-gradient(135deg, #0d6efd, #6f42c1);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-</style>
-{% endblock %}
-
-{% block content %}
-<!-- Hero Section -->
-<section class="hero-section text-white">
-    <div class="container position-relative" style="z-index: 2;">
-        <div class="row align-items-center">
-            <div class="col-lg-6 mb-5 mb-lg-0">
-                <h1 class="display-3 fw-bold mb-4">
-                    Your Home,<br>
-                    <span class="text-warning">Our Care.</span>
-                </h1>
-                <p class="lead mb-4 opacity-75">
-                    BlissfulHome connects you with verified professionals for all your home service needs —
-                    from AC repair to deep cleaning, just a click away.
-                </p>
-                <div class="d-flex gap-3 flex-wrap">
-                    <a href="{{ url_for('auth.user_signup') }}" class="btn btn-warning btn-lg px-4 fw-semibold">
-                        <i class="bi bi-person-plus me-2"></i>Get Started
-                    </a>
-                    <a href="#services" class="btn btn-outline-light btn-lg px-4">
-                        <i class="bi bi-arrow-down me-2"></i>Explore Services
-                    </a>
-                </div>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div style="max-width: 600px; margin: 10px auto; text-align: center;">
+                {% for category, message in messages %}
+                    <div style="padding: 10px; margin: 5px 0; border-radius: 5px;
+                        {% if category == 'success' %}background-color: #d4edda; color: #155724;
+                        {% elif category == 'danger' %}background-color: #f8d7da; color: #721c24;
+                        {% elif category == 'warning' %}background-color: #fff3cd; color: #856404;
+                        {% else %}background-color: #d1ecf1; color: #0c5460;{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
             </div>
-            <div class="col-lg-5 offset-lg-1">
-                <div class="row g-3">
-                    <div class="col-6">
-                        <div class="card bg-white bg-opacity-10 border-0 text-white p-3 rounded-4 text-center">
-                            <i class="bi bi-patch-check-fill fs-1 mb-2 text-warning"></i>
-                            <h6 class="fw-semibold mb-0">Verified Pros</h6>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="card bg-white bg-opacity-10 border-0 text-white p-3 rounded-4 text-center">
-                            <i class="bi bi-clock-fill fs-1 mb-2 text-warning"></i>
-                            <h6 class="fw-semibold mb-0">Quick Booking</h6>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="card bg-white bg-opacity-10 border-0 text-white p-3 rounded-4 text-center">
-                            <i class="bi bi-shield-check fs-1 mb-2 text-warning"></i>
-                            <h6 class="fw-semibold mb-0">Safe & Secure</h6>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="card bg-white bg-opacity-10 border-0 text-white p-3 rounded-4 text-center">
-                            <i class="bi bi-star-fill fs-1 mb-2 text-warning"></i>
-                            <h6 class="fw-semibold mb-0">Rated Reviews</h6>
-                        </div>
-                    </div>
+        {% endif %}
+    {% endwith %}
+
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Welcome to Blissful Home!</h2>
+            <p>Your trusted partner for essential home services.</p>
+
+            <!-- User Type Selection Form -->
+            <form action="{{ url_for('auth.select_user_type') }}" method="POST">
+                <h3>Who are you?</h3>
+                <div class="radio-group">
+                    <label for="user-radio">
+                        <input type="radio" name="user_type" value="user" id="user-radio" required>
+                        <h4>Customer</h4>
+                        <p>Looking to hire professionals for your home services?</p>
+                    </label>
+                    <label for="service-radio">
+                        <input type="radio" name="user_type" value="service_professional" id="service-radio" required>
+                        <h4>Service Professional</h4>
+                        <p>Offering services for home improvement?</p>
+                    </label>
+                    <label for="admin-radio">
+                        <input type="radio" name="user_type" value="admin" id="admin-radio" required>
+                        <h4>Admin</h4>
+                        <p>Admin access to manage services and professionals.</p>
+                    </label>
                 </div>
+                <button type="submit" class="btn primary-btn">Continue</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- What We Offer Section -->
+    <section class="what-we-offer" id="services">
+        <div class="section-title">
+            <h2>What We Offer</h2>
+            <p>Explore our wide range of home services designed to make your life easier!</p>
+        </div>
+        <div class="services-list">
+            <div class="service-card">
+                <h3>Cleaning</h3>
+                <p>Professional cleaning services to keep your home spotless.</p>
+            </div>
+            <div class="service-card">
+                <h3>Salon</h3>
+                <p>Beauty treatments and salon services in the comfort of your home.</p>
+            </div>
+            <div class="service-card">
+                <h3>Electrician</h3>
+                <p>Expert electrical repairs and installations for your home.</p>
+            </div>
+            <div class="service-card">
+                <h3>Plumbing</h3>
+                <p>Expert plumbing services for pipes, fittings and maintenance.</p>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Services Showcase -->
-<section class="py-5 bg-light" id="services">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="display-6 fw-bold">What We <span class="text-primary">Offer</span></h2>
-            <p class="lead text-muted">Professional home services delivered to your doorstep</p>
-        </div>
-        <div class="row g-4">
-            {% set service_icons = {
-            'AC Servicing': ['bi-snow', 'primary'],
-            'Plumbing': ['bi-droplet-fill', 'info'],
-            'Electrical': ['bi-lightning-fill', 'warning'],
-            'House Cleaning': ['bi-stars', 'success'],
-            'Salon at Home': ['bi-scissors', 'danger'],
-            'Gardening': ['bi-tree-fill', 'success'],
-            'Pest Control': ['bi-bug-fill', 'secondary'],
-            'Painting': ['bi-palette-fill', 'primary']
-            } %}
-            {% for name, data in service_icons.items() %}
-            <div class="col-md-6 col-lg-3">
-                <div class="card service-showcase-card shadow-sm h-100 p-4">
-                    <div class="service-icon bg-{{ data[1] }} bg-opacity-10 text-{{ data[1] }} mb-3">
-                        <i class="bi {{ data[0] }}"></i>
-                    </div>
-                    <h5 class="fw-bold">{{ name }}</h5>
-                    <p class="text-muted small mb-0">Expert {{ name.lower() }} services by verified professionals.</p>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</section>
+    <!-- About Section -->
+    <section id="about" style="padding: 60px 40px; text-align: center; background-color: #f4f4f4;">
+        <h2 style="font-size: 2.5em; margin-bottom: 15px; color: #2c3e50;">About Us</h2>
+        <p style="font-size: 1.2em; color: #555; max-width: 700px; margin: 0 auto;">
+            BlissfulHome Services connects you with trusted, verified professionals for all your home service needs.
+            From electrical work to salon treatments, we bring quality services right to your doorstep.
+        </p>
+    </section>
 
-<!-- How It Works -->
-<section class="py-5">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="display-6 fw-bold">How It <span class="text-primary">Works</span></h2>
-        </div>
-        <div class="row g-4 text-center">
-            <div class="col-md-4">
-                <div class="p-4">
-                    <div class="stats-number mb-2">1</div>
-                    <h5 class="fw-bold">Choose a Service</h5>
-                    <p class="text-muted">Browse our wide range of home services and pick what you need.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="p-4">
-                    <div class="stats-number mb-2">2</div>
-                    <h5 class="fw-bold">Book a Professional</h5>
-                    <p class="text-muted">Place a service request and a verified professional will be assigned.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="p-4">
-                    <div class="stats-number mb-2">3</div>
-                    <h5 class="fw-bold">Relax & Review</h5>
-                    <p class="text-muted">Sit back while we handle everything. Rate the service when done.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-{% endblock %}
+    <footer id="contact">
+        <p>&copy; 2024 Blissful Home. All rights reserved.</p>
+    </footer>
+</body>
+</html>
