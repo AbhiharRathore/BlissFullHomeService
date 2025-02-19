@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Book Service - BlissfulHome{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle mb-3"
+                            style="width:70px;height:70px;">
+                            <i class="bi bi-calendar-plus fs-2 text-primary"></i>
+                        </div>
+                        <h3 class="fw-bold">Book {{ service.name }}</h3>
+                        <p class="text-muted">{{ service.description }}</p>
+                    </div>
+                    <div class="alert alert-light border rounded-3 mb-4">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <small class="text-muted d-block">Price</small>
+                                <span class="fw-bold text-success fs-5">₹{{ service.price }}</span>
+                            </div>
+                            <div class="col-4">
+                                <small class="text-muted d-block">Duration</small>
+                                <span class="fw-semibold">{{ service.time_required or 'N/A' }}</span>
+                            </div>
+                            <div class="col-4">
+                                <small class="text-muted d-block">Service ID</small>
+                                <span class="fw-semibold">#{{ service.id }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <form method="POST" action="{{ url_for('main.booking', service_id=service.id) }}">
+                        <div class="form-floating mb-4">
+                            <textarea class="form-control" id="remarks" name="remarks" placeholder="Additional remarks"
+                                style="height:100px"></textarea>
+                            <label for="remarks"><i class="bi bi-chat-left-text me-2"></i>Additional Remarks
+                                (optional)</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                            <i class="bi bi-check-circle me-2"></i>Confirm Booking
+                        </button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('main.user_dashboard') }}" class="text-decoration-none"><i
+                                class="bi bi-arrow-left me-1"></i>Back to Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

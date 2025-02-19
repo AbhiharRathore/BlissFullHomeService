@@ -1,0 +1,173 @@
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body with Background Image and Animation */
+body {
+    font-family: 'Arial', sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url("/static/images/signup.jpg") no-repeat center center fixed;
+    background-size: cover;
+    animation: zoom 10s infinite alternate, backgroundTransition 10s ease-in-out infinite;
+    transition: background-image 10s ease-in-out;
+}
+
+
+/* Smooth Transition Effect for Background Image */
+@keyframes backgroundTransition {
+    0% {
+        background-image: url("/static/images/signup.jpg");
+    }
+    50% {
+        background-image: url("/static/images/alternate_image.jpg"); /* Add alternate image */
+    }
+    100% {
+        background-image: url("/static/images/signup.jpg");
+    }
+}
+
+/* Animation for Zoom Effect */
+@keyframes zoom {
+    0% {
+        background-size: 100%;
+    }
+    100% {
+        background-size: 110%;
+    }
+}
+
+/* Container for the Form */
+.container {
+    background: rgba(0, 0, 30, 0.9);
+    padding: 1.5rem;
+    border-radius: 20px;
+    box-shadow: 0 6px 24px rgba(128, 0, 128, 0.7);
+    max-width: 300px;
+    width: 100%;
+    backdrop-filter: blur(8px);
+}
+
+/* Title of the Form */
+h3.title {
+    text-align: center;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+}
+
+/* Input Fields Styling */
+.text-input {
+    margin-bottom: 0.8rem;
+}
+
+.text-input label {
+    display: block;
+    font-size: 0.8rem;
+    color: #c0c0c0;
+    margin-bottom: 0.3rem;
+}
+
+.text-input input {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-size: 0.9rem;
+    outline: none;
+    box-shadow: 0 2px 12px rgba(128, 0, 128, 0.5);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.text-input input:focus,
+.text-input input:focus-visible {
+    box-shadow: 0 0 12px rgba(75, 0, 130, 0.8);
+}
+
+/* Button Styling */
+button.signin-btn {
+    width: 100%;
+    padding: 0.6rem;
+    background: linear-gradient(90deg, #0044ff, #0020aa);
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button.signin-btn:hover {
+    background: linear-gradient(90deg, #0020aa, #800080);
+}
+
+/* Link to Login */
+.create {
+    text-align: center;
+    margin-top: 0.8rem;
+}
+
+.create a {
+    color: #00d4ff;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.create a:hover {
+    text-decoration: underline;
+}
+
+/* Flash Message Popup */
+.flash-popup {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    padding: 10px 15px;
+    background-color: #f44336;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    animation: fadeIn 0.5s forwards, fadeOut 0.5s 4.5s forwards;
+}
+
+.flash-popup.success {
+    background-color: #4CAF50; /* Green for success */
+    color: white;
+    padding: 15px;
+}
+
+.flash-popup.danger {
+    background-color: #f44336; /* Red for error */
+    color: white;
+    padding: 15px;
+}
+
+/* Flash Message Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Edit Request - BlissfulHome{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle mb-3"
+                            style="width:70px;height:70px;">
+                            <i class="bi bi-pencil-square fs-2 text-primary"></i>
+                        </div>
+                        <h3 class="fw-bold">Edit Service Request</h3>
+                        <p class="text-muted">Request #{{ service_request.id }}</p>
+                    </div>
+                    <div class="alert alert-light border mb-4">
+                        <strong>Service:</strong> {{ service_request.service.name if service_request.service else 'N/A'
+                        }}<br>
+                        <strong>Status:</strong> <span class="badge bg-warning text-dark">{{ service_request.status
+                            }}</span>
+                    </div>
+                    <form method="POST" action="{{ url_for('main.edit_request', request_id=service_request.id) }}">
+                        <div class="form-floating mb-4">
+                            <textarea class="form-control" id="remarks" name="remarks" style="height:120px"
+                                placeholder="Remarks">{{ service_request.remarks or '' }}</textarea>
+                            <label for="remarks"><i class="bi bi-chat-left-text me-2"></i>Remarks</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                            <i class="bi bi-save me-2"></i>Update Request
+                        </button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('main.user_dashboard') }}" class="text-decoration-none"><i
+                                class="bi bi-arrow-left me-1"></i>Back to Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

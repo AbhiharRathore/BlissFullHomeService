@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Professional Login - BlissfulHome{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 rounded-circle mb-3"
+                            style="width:70px;height:70px;">
+                            <i class="bi bi-tools fs-2 text-success"></i>
+                        </div>
+                        <h3 class="fw-bold">Professional Login</h3>
+                        <p class="text-muted">Sign in to manage your service requests</p>
+                    </div>
+                    <form method="POST" action="{{ url_for('auth.service_professional_login') }}">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Username"
+                                required>
+                            <label for="username"><i class="bi bi-person me-2"></i>Username</label>
+                        </div>
+                        <div class="form-floating mb-4">
+                            <input type="password" class="form-control" id="password" name="password"
+                                placeholder="Password" required>
+                            <label for="password"><i class="bi bi-lock me-2"></i>Password</label>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 py-2 fw-semibold">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                        </button>
+                    </form>
+                    <div class="text-center mt-4">
+                        <p class="text-muted mb-0">Don't have an account? <a
+                                href="{{ url_for('auth.service_professional_signup') }}"
+                                class="fw-semibold text-decoration-none text-success">Sign Up</a></p>
+                        <a href="{{ url_for('main.home') }}" class="text-decoration-none small"><i
+                                class="bi bi-arrow-left me-1"></i>Back to Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

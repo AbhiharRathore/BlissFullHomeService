@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% block title %}Professional Dashboard - BlissfulHome{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-tools me-2 text-success"></i>Welcome, {{ professional.name }}!</h2>
+            <p class="text-muted mb-0">Service Type: <span class="badge bg-info text-dark">{{ professional.service_type
+                    }}</span>
+                {% if professional.rating %} | Rating: <span class="text-warning"><i class="bi bi-star-fill"></i> {{
+                    "%.1f"|format(professional.rating) }}</span>{% endif %}</p>
+        </div>
+        <a href="{{ url_for('main.edit_professional_profile') }}" class="btn btn-outline-primary"><i
+                class="bi bi-pencil me-1"></i>Edit Profile</a>
+    </div>
+
+    <!-- Pending Requests (matching service type) -->
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-header bg-warning bg-opacity-10 py-3">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-hourglass-split me-2 text-warning"></i>New Service Requests ({{
+                todays_services|length }})</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Service</th>
+                            <th>Customer</th>
+                            <th>Address</th>
+                            <th>Pincode</th>
+                            <th>Requested</th>
+                            <th>Remarks</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req, service, user in todays_services %}
+                        <tr>
+                            <td><span class="badge bg-secondary">{{ req.id }}</span></td>
+                            <td class="fw-semibold">{{ service.name }}</td>
+                            <td>{{ user.name }}</td>
+                            <td class="small">{{ user.address[:30] }}</td>
+                            <td>{{ user.pincode }}</td>
+                            <td class="small">{{ req.date_requested.strftime('%d %b %Y') }}</td>
+                            <td class="small text-muted">{{ req.remarks or '-' }}</td>
+                            <td>
+                                <form action="{{ url_for('main.accept_service', service_request_id=req.id) }}"
+                                    method="POST" class="d-inline">
+                                    <button class="btn btn-success btn-sm"><i
+                                            class="bi bi-check-lg me-1"></i>Accept</button>
+                                </form>
+                                <form action="{{ url_for('main.reject_service', service_request_id=req.id) }}"
+                                    method="POST" class="d-inline">
+                                    <button class="btn btn-outline-danger btn-sm"><i
+                                            class="bi bi-x-lg me-1"></i>Reject</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">No pending requests for your service
+                                type.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Accepted / Active -->
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-header bg-primary bg-opacity-10 py-3">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-clipboard2-check me-2 text-primary"></i>Active Requests ({{
+                accepted_services|length }})</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Service</th>
+                            <th>Customer</th>
+                            <th>Address</th>
+                            <th>Pincode</th>
+                            <th>Accepted On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req, service, user in accepted_services %}
+                        <tr>
+                            <td><span class="badge bg-secondary">{{ req.id }}</span></td>
+                            <td class="fw-semibold">{{ service.name }}</td>
+                            <td>{{ user.name }}</td>
+                            <td class="small">{{ user.address }}</td>
+                            <td>{{ user.pincode }}</td>
+                            <td class="small">{{ req.date_accepted.strftime('%d %b %Y') if req.date_accepted else 'N/A'
+                                }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">No active requests.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Closed / Completed -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-success bg-opacity-10 py-3">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-check-circle me-2 text-success"></i>Completed Requests ({{
+                closed_services|length }})</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Service</th>
+                            <th>Customer</th>
+                            <th>Completed</th>
+                            <th>Rating</th>
+                            <th>Review</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req, service, user in closed_services %}
+                        <tr>
+                            <td><span class="badge bg-secondary">{{ req.id }}</span></td>
+                            <td class="fw-semibold">{{ service.name }}</td>
+                            <td>{{ user.name }}</td>
+                            <td class="small">{{ req.date_completed.strftime('%d %b %Y') if req.date_completed else
+                                'N/A' }}</td>
+                            <td>
+                                {% if req.rating %}
+                                <span class="text-warning"><i class="bi bi-star-fill"></i> {{ req.rating }}/5</span>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="small text-muted">{{ req.review or '-' }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">No completed requests yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

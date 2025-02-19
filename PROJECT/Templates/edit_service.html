@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="eng">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width-device-width,initial-scale=1.0" >
+    <title>Edit Service</title>
+    <link rel="stylesheet",href="{{url_for('static',filename='style/edit.css')}}">
+</head>
+<body>
+    <div class="container">
+        <h3>Edit Service</h3>
+        <p>Update the details of the service below:</p>
+        <form method="POST" action="{{url_for('auth.edit_service',service_id=service.id)}}">
+            <label for="service_name">Service Name</label>
+            <input type="text" id="service_name" name="service_name" value="{{ service.service_name }}" required>
+
+            <label for="service_description">Description</label>
+            <textarea id="service_description" name="service_description" required>{{ service.description }}</textarea>
+
+            <label for="service_price">Price</label>
+            <input type="number" id="service_price" name="service_price" step="0.01" value="{{ service.price }}" required>
+
+            <button type="submit">Update Service</button>
+        </form>
+
+        <a href="{{ url_for('auth.service_manage') }}" class="back-btn">Back to Services</a>
+    </div>
+</body>
+</html>
+   

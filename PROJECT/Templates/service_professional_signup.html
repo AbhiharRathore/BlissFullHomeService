@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %}Professional Sign Up - BlissfulHome{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 rounded-circle mb-3"
+                            style="width:70px;height:70px;">
+                            <i class="bi bi-person-badge fs-2 text-success"></i>
+                        </div>
+                        <h3 class="fw-bold">Professional Registration</h3>
+                        <p class="text-muted">Join our team of verified service professionals</p>
+                    </div>
+                    <div class="alert alert-info small">
+                        <i class="bi bi-info-circle me-2"></i>Your account will be reviewed by an admin before
+                        activation. You'll be able to login once approved.
+                    </div>
+                    <form method="POST" action="{{ url_for('auth.service_professional_signup') }}" novalidate>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        placeholder="Full Name" required>
+                                    <label for="name"><i class="bi bi-person me-2"></i>Full Name</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="username" name="username"
+                                        placeholder="Username" required>
+                                    <label for="username"><i class="bi bi-at me-2"></i>Username</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone"
+                                        required pattern="[0-9]{10}">
+                                    <label for="phone"><i class="bi bi-phone me-2"></i>Phone Number</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" id="service_type" name="service_type" required>
+                                        <option value="" selected disabled>Select a service</option>
+                                        {% for svc in services %}
+                                        <option value="{{ svc.name }}">{{ svc.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="service_type"><i class="bi bi-briefcase me-2"></i>Service Type</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="experience" name="experience"
+                                        placeholder="Experience" required min="0">
+                                    <label for="experience"><i class="bi bi-star me-2"></i>Years of Exp.</label>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="address" name="address"
+                                        placeholder="Address">
+                                    <label for="address"><i class="bi bi-geo-alt me-2"></i>Address</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="pincode" name="pincode"
+                                        placeholder="Pincode" pattern="[0-9]{6}" maxlength="6">
+                                    <label for="pincode"><i class="bi bi-mailbox me-2"></i>Pincode</label>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-floating">
+                                    <textarea class="form-control" id="description" name="description"
+                                        placeholder="About yourself" style="height:80px"></textarea>
+                                    <label for="description"><i class="bi bi-card-text me-2"></i>About yourself</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="password" class="form-control" id="pwd" name="pwd"
+                                        placeholder="Password" required minlength="4">
+                                    <label for="pwd"><i class="bi bi-lock me-2"></i>Password</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="password" class="form-control" id="confpwd" name="confpwd"
+                                        placeholder="Confirm Password" required>
+                                    <label for="confpwd"><i class="bi bi-lock-fill me-2"></i>Confirm Password</label>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 py-2 fw-semibold mt-4">
+                            <i class="bi bi-person-check me-2"></i>Submit Registration
+                        </button>
+                    </form>
+                    <div class="text-center mt-4">
+                        <p class="text-muted mb-0">Already registered? <a
+                                href="{{ url_for('auth.service_professional_login') }}"
+                                class="fw-semibold text-decoration-none text-success">Login</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

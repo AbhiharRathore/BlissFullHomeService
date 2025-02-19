@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}My Profile - BlissfulHome{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle mb-3"
+                            style="width:80px;height:80px;">
+                            <i class="bi bi-person-circle fs-1 text-primary"></i>
+                        </div>
+                        <h3 class="fw-bold">My Profile</h3>
+                        <p class="text-muted">Manage your account information</p>
+                    </div>
+                    <form method="POST" action="{{ url_for('main.user_profile') }}">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}"
+                                required>
+                            <label for="name"><i class="bi bi-person me-2"></i>Full Name</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control bg-light" id="username" value="{{ user.username }}"
+                                disabled>
+                            <label for="username"><i class="bi bi-at me-2"></i>Username (cannot be changed)</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="tel" class="form-control" id="phone" name="phone" value="{{ user.phone }}"
+                                required>
+                            <label for="phone"><i class="bi bi-phone me-2"></i>Phone</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="address" name="address"
+                                value="{{ user.address }}" required>
+                            <label for="address"><i class="bi bi-geo-alt me-2"></i>Address</label>
+                        </div>
+                        <div class="form-floating mb-4">
+                            <input type="text" class="form-control" id="pincode" name="pincode"
+                                value="{{ user.pincode }}" required maxlength="6">
+                            <label for="pincode"><i class="bi bi-mailbox me-2"></i>Pincode</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                            <i class="bi bi-save me-2"></i>Update Profile
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
