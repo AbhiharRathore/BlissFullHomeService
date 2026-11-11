@@ -106,6 +106,7 @@
                                     <!-- Button to close the service -->
                                     {% if sr.status != 'closed' and sr.status != 'completed' and sr.status != 'rejected' %}
                                     <form action="{{ url_for('main.close_service', request_id=sr.id) }}" method="POST" style="margin-top: 10px;">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                         <button type="submit" class="btn btn-danger" style="background-color: #e63946; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Close Service</button>
                                     </form>
                                     {% endif %}
@@ -124,6 +125,7 @@
                                     {% if sr.status == 'closed' %}
                                         <div class="rating-section" style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee;">
                                             <form action="{{ url_for('main.submit_rating', service_request_id=sr.id) }}" method="POST">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                 <label for="rating-{{ sr.id }}"><strong>Rate the Service:</strong></label>
                                                 <select name="rating" id="rating-{{ sr.id }}" required style="display: block; margin: 8px 0; padding: 6px; border-radius: 4px; border: 1px solid #ccc;">
                                                     <option value="1">1 Star</option>

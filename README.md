@@ -85,6 +85,17 @@ On first run, an admin account is automatically seeded:
 
 ---
 
+## Security and tests
+
+- Every POST form carries a per-session CSRF token; requests without a matching token are rejected with 400.
+- Session cookies are `HttpOnly` and `SameSite=Lax`. Set `SECRET_KEY` in the environment; without it the app uses a random key per process.
+- Debug mode is off unless `FLASK_DEBUG=1`.
+
+```bash
+pip install -r requirements-dev.txt
+pytest
+```
+
 ## 📁 Project Structure
 
 ```

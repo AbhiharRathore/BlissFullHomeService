@@ -163,6 +163,7 @@
                                         </td>
                                         <td>
                                             <form action="{{ url_for('main.block_professional', professional_id=professional.id) }}" method="POST" style="display:inline;">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                 <button type="submit" class="btn btn-danger">Block</button>
                                             </form>
                                         </td>
@@ -193,9 +194,11 @@
                                         <td>{{ professional.status }}</td>
                                         <td>
                                             <form action="{{ url_for('main.approve_professional', professional_id=professional.id) }}" method="POST" style="display:inline;">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                 <button type="submit" class="btn btn-success">Accept</button>
                                             </form>
                                             <form action="{{ url_for('main.reject_professional', professional_id=professional.id) }}" method="POST" style="display:inline;">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                 <button type="submit" class="btn btn-danger">Reject</button>
                                             </form>
                                         </td>
@@ -244,10 +247,12 @@
                                         <td>
                                             {% if customer.is_blocked %}
                                                 <form action="{{ url_for('main.unblock_customer', customer_id=customer.id) }}" method="POST" style="display:inline;">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                     <button type="submit" class="btn btn-success">Unblock</button>
                                                 </form>
                                             {% else %}
                                                 <form action="{{ url_for('main.block_customer', customer_id=customer.id) }}" method="POST" style="display:inline;">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                     <button type="submit" class="btn btn-danger">Block</button>
                                                 </form>
                                             {% endif %}

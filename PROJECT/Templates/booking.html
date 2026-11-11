@@ -29,6 +29,7 @@
 
             <!-- Booking Form -->
             <form method="POST" action="{{ url_for('main.booking', service_id=service.id) }}" class="book-form">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="submit-btn">Confirm Booking</button>
             </form>
 

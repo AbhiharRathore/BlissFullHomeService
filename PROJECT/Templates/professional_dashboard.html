@@ -66,9 +66,11 @@
                                 <td>{{ service.name }}</td>
                                 <td>
                                     <form action="{{ url_for('main.accept_service', service_request_id=sr.id) }}" method="POST" style="display:inline;">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                         <button type="submit" class="action-btn accept">Accept</button>
                                     </form>
                                     <form action="{{ url_for('main.reject_service', service_request_id=sr.id) }}" method="POST" style="display:inline;">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                         <button type="submit" class="action-btn reject">Reject</button>
                                     </form>
                                 </td>

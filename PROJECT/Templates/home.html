@@ -45,6 +45,7 @@
 
             <!-- User Type Selection Form -->
             <form action="{{ url_for('auth.select_user_type') }}" method="POST">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <h3>Who are you?</h3>
                 <div class="radio-group">
                     <label for="user-radio">

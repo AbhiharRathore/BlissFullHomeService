@@ -1,9 +1,11 @@
-from flask import Flask, session, redirect, url_for, request, flash, render_template
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, login_user, current_user
-from datetime import timedelta
-import os
+import hmac
 import logging
+import os
+import secrets
+from datetime import timedelta
+
+from flask import Flask, abort, render_template, request, session
+from flask_login import LoginManager
 from PROJECT.models import Admin, User, ServiceProfessional, db
 
 login_manager = LoginManager()
@@ -13,12 +15,34 @@ def create_app():
     app = Flask(__name__)
 
     class Config:
-        SECRET_KEY = os.getenv('SECRET_KEY', 'thisismykey')
+        # No hardcoded fallback: without SECRET_KEY, sessions are signed with a
+        # per-process random key (everyone is logged out on restart, nothing is forgeable).
+        SECRET_KEY = os.getenv('SECRET_KEY') or secrets.token_hex(32)
         SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///db.sqlite3')
         SQLALCHEMY_TRACK_MODIFICATIONS = False
         PERMANENT_SESSION_LIFETIME = timedelta(minutes=30)
+        SESSION_COOKIE_HTTPONLY = True
+        SESSION_COOKIE_SAMESITE = 'Lax'
 
     app.config.from_object(Config)
+    if not os.getenv('SECRET_KEY'):
+        logging.warning("SECRET_KEY is not set; using a random key for this process.")
+
+    # CSRF protection: every POST form carries a per-session token (injected by
+    # csrf_token() in the templates) that must match the one stored in the session.
+    def csrf_token():
+        if '_csrf' not in session:
+            session['_csrf'] = secrets.token_urlsafe(32)
+        return session['_csrf']
+
+    app.jinja_env.globals['csrf_token'] = csrf_token
+
+    @app.before_request
+    def check_csrf():
+        if request.method == 'POST':
+            sent = request.form.get('csrf_token', '')
+            if not sent or not hmac.compare_digest(sent, session.get('_csrf', '')):
+                abort(400, description='Missing or invalid CSRF token')
 
     db.init_app(app)
     login_manager.init_app(app)

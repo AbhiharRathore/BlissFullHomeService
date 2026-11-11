@@ -64,6 +64,7 @@
             <div class="edit-form">
                 <h2>Update Your Information</h2>
                 <form action="{{ url_for('main.edit_professional_profile') }}" method="POST">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="form-group">
                         <label for="phone">Phone Number:</label>
                         <input type="text" id="phone" name="phone" value="{{ professional.phone }}" required>

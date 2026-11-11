@@ -11,6 +11,7 @@
         <h3>Edit Service</h3>
         <p>Update the details of the service below:</p>
         <form method="POST" action="{{url_for('auth.edit_service',service_id=service.id)}}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label for="service_name">Service Name</label>
             <input type="text" id="service_name" name="service_name" value="{{ service.service_name }}" required>
 

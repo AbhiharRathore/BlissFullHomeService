@@ -19,6 +19,7 @@
         {% endwith %}
 
         <form action="{{ url_for('main.submit_rating', service_request_id=service_request.id) }}" method="POST">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <h3 class="title">Rate Service</h3>
             <p style="text-align: center; color: #e0e0e0; margin-bottom: 1.2rem; font-size: 1rem;">
                 <strong>{{ service_request.service.name }}</strong>

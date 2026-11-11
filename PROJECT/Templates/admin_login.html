@@ -11,6 +11,7 @@
         <h3 class="title">Admin Login</h3>
 
         <form id="loginForm" action="{{ url_for('auth.admin_login') }}" method="POST">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="text-input">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" placeholder="Enter Username" required>

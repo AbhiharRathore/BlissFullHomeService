@@ -1,8 +1,7 @@
 from datetime import datetime
-from flask import Blueprint, jsonify, render_template, request, redirect, session, url_for, flash, abort
+from flask import Blueprint, jsonify, render_template, request, redirect, session, url_for, flash
 from flask_login import login_required, current_user
 from .models import Admin, Service, ServiceRequest, ServiceProfessional, User, db
-from sqlalchemy import func
 
 main = Blueprint('main', __name__)
 
@@ -191,7 +190,7 @@ def delete_service(service_id):
         db.session.delete(service)
         db.session.commit()
         flash('Service deleted successfully!', 'success')
-    except Exception as e:
+    except Exception:
         db.session.rollback()
         flash('Error deleting service. Please try again.', 'danger')
 

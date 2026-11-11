@@ -195,7 +195,7 @@ def service_professional_signup():
             db.session.commit()
             flash('Account created successfully. Awaiting approval from admin.', 'success')
             return redirect(url_for('auth.service_professional_login'))
-        except Exception as e:
+        except Exception:
             db.session.rollback()
             flash('An error occurred during registration. Please try again.', 'danger')
             return redirect(url_for('auth.service_professional_signup'))

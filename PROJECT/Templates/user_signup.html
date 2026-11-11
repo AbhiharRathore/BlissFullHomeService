@@ -17,6 +17,7 @@
         {% endwith %}
 
         <form action="{{ url_for('auth.user_signup') }}" method="POST" onsubmit="return validateForm()">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <h3 class="title">Create Account</h3>
 
             <!-- Full Name -->
