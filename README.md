@@ -81,7 +81,8 @@ On first run, an admin account is automatically seeded:
 | Username | `admin`    |
 | Password | `admin123` |
 
-> ⚠️ Change this password immediately in a production environment.
+> ⚠️ Set `ADMIN_PASSWORD` in production; `admin123` is only the local default. The Render blueprint
+> (`render.yaml`) generates it. Demo customer (`rahul` / `pass123`) and professional (`suresh` / `pass123`) accounts are seeded too.
 
 ---
 

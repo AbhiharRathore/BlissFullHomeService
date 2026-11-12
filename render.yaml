@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: blissful-home-service
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    # One worker: SQLite and the startup seed are not safe across several processes.
+    startCommand: gunicorn app:app --workers 1 --threads 4 --bind 0.0.0.0:$PORT
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        generateValue: true

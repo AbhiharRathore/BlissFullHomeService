@@ -91,7 +91,8 @@ def create_app():
             # Seed admin if no admin exists
             if not Admin.query.first():
                 dummy_admin = Admin(username='admin', role=0)
-                dummy_admin.set_password('admin123')
+                # Deployments set ADMIN_PASSWORD; the default is for local runs only.
+                dummy_admin.set_password(os.getenv('ADMIN_PASSWORD', 'admin123'))
                 db.session.add(dummy_admin)
                 db.session.commit()
 
